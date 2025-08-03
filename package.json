@@ -6,22 +6,35 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "blog:generate": "tsx scripts/seo-gen.ts",
+    "blog:weekly": "tsx scripts/blog-automation.ts weekly",
+    "blog:topic": "tsx scripts/blog-automation.ts topic",
+    "lighthouse": "lhci autorun",
+    "seo:check": "tsx scripts/seo-checker.ts",
+    "performance": "npm run build && npm run lighthouse"
   },
   "dependencies": {
+    "@next/bundle-analyzer": "^15.4.5",
+    "critters": "^0.0.23",
+    "next": "15.4.5",
+    "next-seo": "^6.8.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.5"
+    "sitemap": "^8.0.0",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@lhci/cli": "^0.13.0",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "tsx": "^4.20.3",
+    "typescript": "^5"
   }
 }

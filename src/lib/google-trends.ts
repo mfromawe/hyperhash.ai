@@ -1,5 +1,6 @@
 // Future Google Trends API Integration
 // This file will contain trending hashtag functionality
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 export interface TrendingData {
   keyword: string;
@@ -29,42 +30,42 @@ export class GoogleTrendsService {
 
   /**
    * Get trending hashtags based on Google Trends data
-   * @param request - The trending hashtag request parameters
+   * @param _request - The trending hashtag request parameters (unused in current implementation)
    * @returns Promise<TrendingData[]>
    */
-  async getTrendingHashtags(request: TrendingHashtagRequest): Promise<TrendingData[]> {
+  async getTrendingHashtags(_request: TrendingHashtagRequest): Promise<TrendingData[]> {
     // TODO: Implement Google Trends API integration
     throw new Error('Google Trends API integration not implemented yet');
   }
 
   /**
    * Get trending keywords for a specific region
-   * @param region - The region code (us, tr, gb, etc.)
+   * @param _region - The region code (us, tr, gb, etc.) (unused in current implementation)
    * @returns Promise<string[]>
    */
-  async getTrendingKeywords(region: string): Promise<string[]> {
+  async getTrendingKeywords(_region: string): Promise<string[]> {
     // TODO: Implement trending keywords functionality
     throw new Error('Trending keywords functionality not implemented yet');
   }
 
   /**
    * Get real-time trending hashtags
-   * @param region - The region code
-   * @param limit - Number of hashtags to return
+   * @param _region - The region code (unused in current implementation)
+   * @param _limit - Number of hashtags to return (unused in current implementation)
    * @returns Promise<string[]>
    */
-  async getRealTimeTrendingHashtags(region: string, limit: number = 10): Promise<string[]> {
+  async getRealTimeTrendingHashtags(_region: string, _limit: number = 10): Promise<string[]> {
     // TODO: Implement real-time trending functionality
     throw new Error('Real-time trending functionality not implemented yet');
   }
 
   /**
    * Analyze hashtag performance based on trends
-   * @param hashtags - Array of hashtags to analyze
-   * @param region - The region code
+   * @param _hashtags - Array of hashtags to analyze (unused in current implementation)
+   * @param _region - The region code (unused in current implementation)
    * @returns Promise<{hashtag: string, trendScore: number, popularity: string}[]>
    */
-  async analyzeHashtagPerformance(hashtags: string[], region: string) {
+  async analyzeHashtagPerformance(_hashtags: string[], _region: string) {
     // TODO: Implement hashtag performance analysis
     throw new Error('Hashtag performance analysis not implemented yet');
   }
