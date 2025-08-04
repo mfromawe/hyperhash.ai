@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true npm run build",
+    "postinstall": "prisma generate",
     "blog:generate": "tsx scripts/seo-gen.ts",
     "blog:weekly": "tsx scripts/blog-automation.ts weekly",
     "blog:topic": "tsx scripts/blog-automation.ts topic",
@@ -38,7 +39,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@lhci/cli": "^0.13.0",
+    "@lhci/cli": "^0.15.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
