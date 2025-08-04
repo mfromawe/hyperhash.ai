@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { productionAPI } from '@/lib/api/hashtag-api';
+import { trackHashtagGeneration, trackCopyAction } from '@/components/Analytics';
 import { useUserStore } from '@/store/userStore';
 import AuthButtons from '@/components/auth/AuthButtons';
 
