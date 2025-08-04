@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { productionAPI } from '@/lib/api/hashtag-api';
+import { geminiAPI } from '@/lib/api/hashtag-api';
 import { trackHashtagGeneration, trackCopyAction } from '@/components/Analytics';
 import { useUserStore } from '@/store/userStore';
 import AuthButtons from '@/components/auth/AuthButtons';
@@ -68,7 +68,7 @@ export default function Home() {
         language: language,
         maxHashtags: 20
       };
-      const data = await productionAPI.generateHashtags(requestData);
+      const data = await geminiAPI.generateHashtags(requestData);
       const generatedHashtags = data.hashtags.map(h => h.tag) || [];
       setHashtags(generatedHashtags);
       

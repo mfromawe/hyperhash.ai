@@ -131,9 +131,6 @@ class HashtagAPI {
   }
 }
 
-// API client for the main application, pointing to the Railway production API
-export const productionAPI = new HashtagAPI('https://hyperhash-production-2512.up.railway.app');
-
 // API client specifically for the Vercel-hosted Gemini endpoint
 export const geminiAPI = new HashtagAPI('/api');
 
