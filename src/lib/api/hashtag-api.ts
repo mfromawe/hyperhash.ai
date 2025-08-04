@@ -95,7 +95,7 @@ class HashtagAPI {
 
     const mockHashtags = Array.from({ length: hashtagCount }, (_, i) => ({
       tag: `#${request.platform}mock${i + 1}`,
-      difficulty: 'Medium',
+      difficulty: 'Medium' as 'Easy' | 'Medium' | 'Hard',
       volume: 10000,
       engagement: 50,
       trending: false,
