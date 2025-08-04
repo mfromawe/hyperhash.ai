@@ -14,6 +14,12 @@ interface User {
   isActive: boolean;
   createdAt: string;
   lastLoginAt?: string;
+  subscription?: {
+    planId: string;
+    status: string;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+  };
 }
 
 interface AuthContextType {

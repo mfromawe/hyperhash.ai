@@ -21,6 +21,7 @@
     "@google/generative-ai": "^0.24.1",
     "@next/bundle-analyzer": "^15.4.5",
     "@prisma/client": "^6.13.0",
+    "@stripe/stripe-js": "^7.8.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.2",
@@ -32,6 +33,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sitemap": "^8.0.0",
+    "stripe": "^18.4.0",
     "zustand": "^5.0.7"
   },
   "devDependencies": {
