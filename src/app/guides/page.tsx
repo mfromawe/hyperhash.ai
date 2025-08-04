@@ -34,6 +34,96 @@ export default function GuidesPage() {
         name: 'TikTok Hashtag Trends',
         description: 'How to leverage TikTok hashtags for viral content',
         url: 'https://hyperhash.ai/guides/tiktok-trends'
+      },
+      {
+        '@type': 'Article',
+        name: 'Twitter Hashtag Best Practices',
+        description: 'Master Twitter hashtag strategy for maximum engagement',
+        url: 'https://hyperhash.ai/guides/twitter-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'YouTube Hashtag Optimization',
+        description: 'Boost YouTube video discoverability with hashtags',
+        url: 'https://hyperhash.ai/guides/youtube-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'LinkedIn Professional Hashtags',
+        description: 'B2B hashtag strategies for LinkedIn success',
+        url: 'https://hyperhash.ai/guides/linkedin-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'Pinterest Hashtag Strategy',
+        description: 'Drive traffic with Pinterest hashtag optimization',
+        url: 'https://hyperhash.ai/guides/pinterest-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'Hashtag Research Methodology',
+        description: 'Professional hashtag research techniques and tools',
+        url: 'https://hyperhash.ai/guides/hashtag-research'
+      },
+      {
+        '@type': 'Article',
+        name: 'Multi-Platform Hashtag Strategy',
+        description: 'Coordinate hashtags across multiple social platforms',
+        url: 'https://hyperhash.ai/guides/multi-platform-strategy'
+      },
+      {
+        '@type': 'Article',
+        name: 'Hashtag Analytics Guide',
+        description: 'Measure and optimize hashtag performance',
+        url: 'https://hyperhash.ai/guides/hashtag-analytics'
+      },
+      {
+        '@type': 'Article',
+        name: 'Branded Hashtag Campaigns',
+        description: 'Create successful branded hashtag strategies',
+        url: 'https://hyperhash.ai/guides/branded-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'E-commerce Hashtag Strategy',
+        description: 'Drive sales with product and shopping hashtags',
+        url: 'https://hyperhash.ai/guides/ecommerce-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'Food & Restaurant Hashtags',
+        description: 'Attract food lovers with strategic hashtag use',
+        url: 'https://hyperhash.ai/guides/food-restaurant-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'Fitness & Health Hashtags',
+        description: 'Build fitness communities with targeted hashtags',
+        url: 'https://hyperhash.ai/guides/fitness-health-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'Travel Hashtag Guide',
+        description: 'Inspire wanderlust with travel hashtag strategies',
+        url: 'https://hyperhash.ai/guides/travel-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'Hashtag Dos and Don\'ts',
+        description: 'Essential hashtag rules and common mistakes',
+        url: 'https://hyperhash.ai/guides/hashtag-dos-and-donts'
+      },
+      {
+        '@type': 'Article',
+        name: 'Seasonal Hashtag Calendar',
+        description: 'Plan seasonal hashtag campaigns year-round',
+        url: 'https://hyperhash.ai/guides/seasonal-hashtags'
+      },
+      {
+        '@type': 'Article',
+        name: 'Hashtag Automation Guide',
+        description: 'Automate hashtag strategies with tools and AI',
+        url: 'https://hyperhash.ai/guides/hashtag-automation'
       }
     ]
   };
@@ -169,7 +259,7 @@ export default function GuidesPage() {
           difficulty: "Beginner",
           icon: "🍕",
           color: "orange",
-          href: "/guides/food-hashtags",
+          href: "/guides/food-restaurant-hashtags",
           tags: ["Food", "Restaurant", "Local"]
         },
         {
@@ -179,7 +269,7 @@ export default function GuidesPage() {
           difficulty: "Beginner",
           icon: "💪",
           color: "green",
-          href: "/guides/fitness-hashtags",
+          href: "/guides/fitness-health-hashtags",
           tags: ["Fitness", "Health", "Motivation"]
         },
         {
@@ -204,7 +294,7 @@ export default function GuidesPage() {
           difficulty: "Beginner",
           icon: "✅",
           color: "green",
-          href: "/guides/hashtag-dos-donts",
+          href: "/guides/hashtag-dos-and-donts",
           tags: ["Best Practices", "Tips", "Mistakes"]
         },
         {

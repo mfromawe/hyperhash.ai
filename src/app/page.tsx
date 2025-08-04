@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { trackHashtagGeneration, trackCopyAction } from '@/components/Analytics';
 import { useUserStore } from '@/store/userStore';
+import AuthButtons from '@/components/auth/AuthButtons';
 
 export default function Home() {
   const [inputText, setInputText] = useState('');
@@ -212,14 +213,9 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* CTA Button */}
+              {/* Auth Buttons */}
               <div className="flex items-center space-x-4">
-                <Link 
-                  href="/pricing" 
-                  className="hidden sm:inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
-                >
-                  🚀 Go Pro
-                </Link>
+                <AuthButtons />
                 
                 {/* Mobile Menu Button */}
                 <button className="md:hidden text-gray-600 dark:text-gray-300">
@@ -545,11 +541,10 @@ export default function Home() {
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-4">🛠️ Tools</h3>
                 <ul className="space-y-2 text-sm">
-                  <li><Link href="/tools/instagram" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Instagram Hashtags</Link></li>
-                  <li><Link href="/tools/tiktok" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">TikTok Hashtags</Link></li>
-                  <li><Link href="/tools/twitter" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Twitter Hashtags</Link></li>
-                  <li><Link href="/tools/youtube" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">YouTube Hashtags</Link></li>
-                  <li><Link href="/tools/analytics" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Hashtag Analytics</Link></li>
+                  <li><Link href="/tools" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">AI Hashtag Generator</Link></li>
+                  <li><Link href="/tools" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Multi-Platform Generator</Link></li>
+                  <li><Link href="/tools" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Hashtag Analytics</Link></li>
+                  <li><Link href="/guides" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Strategy Guides</Link></li>
                 </ul>
               </div>
 
@@ -559,9 +554,8 @@ export default function Home() {
                 <ul className="space-y-2 text-sm">
                   <li><Link href="/blog" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Blog</Link></li>
                   <li><Link href="/guides" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Guides</Link></li>
-                  <li><Link href="/faq" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">FAQ</Link></li>
-                  <li><Link href="/case-studies" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Case Studies</Link></li>
-                  <li><Link href="/trends" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Hashtag Trends</Link></li>
+                  <li><Link href="/guides/dos-donts" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Best Practices</Link></li>
+                  <li><Link href="/guides/automation" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Automation Tips</Link></li>
                 </ul>
               </div>
 
@@ -571,9 +565,8 @@ export default function Home() {
                 <ul className="space-y-2 text-sm">
                   <li><Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">About Us</Link></li>
                   <li><Link href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Pricing</Link></li>
-                  <li><Link href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Contact</Link></li>
-                  <li><Link href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
-                  <li><Link href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Terms of Service</Link></li>
+                  <li><Link href="/tools" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Contact</Link></li>
+                  <li><Link href="/tools" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 transition-colors">Privacy Policy</Link></li>
                 </ul>
               </div>
             </div>

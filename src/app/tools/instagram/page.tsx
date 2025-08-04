@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import DynamicHashtagGenerator from '@/components/DynamicHashtagGenerator';
 
 export const metadata: Metadata = {
   title: 'Instagram Hashtag Generator - AI-Powered Tool for Viral Content',
@@ -176,13 +177,20 @@ export default function InstagramToolPage() {
               </span>
             </div>
 
-            {/* CTA Button */}
-            <Link 
-              href="/?platform=instagram"
-              className="inline-block bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold py-4 px-8 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              🚀 Generate Instagram Hashtags Now
-            </Link>
+            {/* CTA Button - Updated to show generator */}
+            <div className="mb-8">
+              <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
+                ⬇️ Instagram'a özel AI destekli hashtag generator'ı hemen deneyin!
+              </p>
+            </div>
+          </div>
+
+          {/* Dynamic Instagram Generator */}
+          <div className="mb-16">
+            <DynamicHashtagGenerator 
+              initialPlatform="instagram" 
+              showPlatformSelector={false}
+            />
           </div>
 
           {/* Instagram Tips */}
