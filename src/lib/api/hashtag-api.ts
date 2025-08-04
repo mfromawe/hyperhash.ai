@@ -10,8 +10,10 @@ class HashtagAPI {
   private baseUrl: string;
   private apiKey?: string;
 
-  constructor(baseUrl: string = '/api', apiKey?: string) {
-    this.baseUrl = baseUrl;
+  constructor(apiKey?: string) {
+    this.baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://hyperhash-production-2512.up.railway.app' 
+      : '/api';
     this.apiKey = apiKey;
   }
 
