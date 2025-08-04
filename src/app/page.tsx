@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { trackHashtagGeneration, trackCopyAction } from '@/components/Analytics';
+import { productionAPI } from '@/lib/api/hashtag-api';
 import { useUserStore } from '@/store/userStore';
 import AuthButtons from '@/components/auth/AuthButtons';
 
@@ -60,29 +60,15 @@ export default function Home() {
     setError('');
     
     try {
-      const response = await fetch('/api/hashtags/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          title: inputText.split(' ').slice(0, 5).join(' '),
-          description: inputText,
-          keywords: inputText.split(' ').filter(word => word.length > 3).slice(0, 10),
-          style: style,
-          platform: platform,
-          language: language,
-          location: location,
-          limit: 20
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-
-      const data = await response.json();
-      const generatedHashtags = data.hashtags || [];
+      const requestData = { 
+        content: inputText,
+        platform: platform as any,
+        category: style,
+        language: language,
+        maxHashtags: 20
+      };
+      const data = await productionAPI.generateHashtags(requestData);
+      const generatedHashtags = data.hashtags.map(h => h.tag) || [];
       setHashtags(generatedHashtags);
       
       // Track analytics

@@ -8,7 +8,7 @@ import {
   PLATFORM_CONFIGS,
   GeneratedHashtag 
 } from '@/types/api';
-import { hashtagAPI } from '@/lib/api/hashtag-api';
+import { geminiAPI } from '@/lib/api/hashtag-api';
 
 interface DynamicHashtagGeneratorProps {
   initialPlatform?: SocialMediaPlatform;
@@ -49,7 +49,7 @@ export default function DynamicHashtagGenerator({
       };
 
       // Use Gemini API for real hashtag generation
-      const result = await hashtagAPI.generateHashtags(request);
+      const result = await geminiAPI.generateHashtags(request);
       setResponse(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

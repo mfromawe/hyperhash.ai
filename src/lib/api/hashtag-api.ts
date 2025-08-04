@@ -6,14 +6,13 @@ import {
   APIError 
 } from '@/types/api';
 
+// The core class for making API requests
 class HashtagAPI {
   private baseUrl: string;
   private apiKey?: string;
 
-  constructor(apiKey?: string) {
-    this.baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://hyperhash-production-2512.up.railway.app' 
-      : '/api';
+  constructor(baseUrl: string, apiKey?: string) {
+    this.baseUrl = baseUrl;
     this.apiKey = apiKey;
   }
 
@@ -61,14 +60,15 @@ class HashtagAPI {
       throw new Error(`Unsupported platform: ${request.platform}`);
     }
 
-    // Platform-specific request validation
     if (request.maxHashtags && request.maxHashtags > platformConfig.maxHashtags) {
       request.maxHashtags = platformConfig.maxHashtags;
     }
 
+    // Correctly use the baseUrl for the request
+    const endpoint = this.baseUrl.startsWith('http') ? '/api/hashtags/generate' : '/hashtags/generate';
+
     try {
-      // Use API route for real Gemini integration
-      const response = await fetch('/api/hashtags/generate', {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,184 +82,59 @@ class HashtagAPI {
 
       return await response.json();
     } catch (error) {
-      console.error('API request failed, falling back to mock:', error);
-      // Fallback to mock if API fails
+      console.error(`API request to ${this.baseUrl} failed, falling back to mock:`, error);
       return this.generateHashtagsMock(request);
     }
   }
 
-  async getTrendingHashtags(platform: SocialMediaPlatform): Promise<string[]> {
-    return this.makeRequest<string[]>(`/hashtags/${platform}/trending`);
-  }
-
-  async analyzeHashtag(hashtag: string, platform: SocialMediaPlatform): Promise<any> {
-    return this.makeRequest(`/hashtags/${platform}/analyze/${encodeURIComponent(hashtag)}`);
-  }
-
-  async getHashtagSuggestions(
-    keyword: string, 
-    platform: SocialMediaPlatform
-  ): Promise<string[]> {
-    return this.makeRequest<string[]>(
-      `/hashtags/${platform}/suggestions?keyword=${encodeURIComponent(keyword)}`
-    );
-  }
-
   // Mock API for development/demo purposes
   async generateHashtagsMock(request: HashtagRequest): Promise<HashtagResponse> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-
+    await new Promise(resolve => setTimeout(resolve, 1000));
     const platformConfig = PLATFORM_CONFIGS[request.platform];
-    const hashtagCount = Math.min(
-      request.maxHashtags || platformConfig.optimalHashtags,
-      platformConfig.maxHashtags
-    );
+    const hashtagCount = request.maxHashtags || platformConfig.optimalHashtags;
 
-    // Mock hashtag generation based on platform
-    const mockHashtags = this.generateMockHashtags(
-      request.content, 
-      request.platform, 
-      hashtagCount
-    );
+    const mockHashtags = Array.from({ length: hashtagCount }, (_, i) => ({
+      tag: `#${request.platform}mock${i + 1}`,
+      difficulty: 'Medium',
+      volume: 10000,
+      engagement: 50,
+      trending: false,
+      category: 'mock',
+      description: 'This is a mock hashtag.'
+    }));
 
     return {
       hashtags: mockHashtags,
       analytics: {
-        estimatedReach: Math.floor(Math.random() * 100000) + 10000,
-        engagementPotential: Math.floor(Math.random() * 80) + 20,
-        competitionLevel: ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)],
-        bestPostingTime: this.getBestPostingTimes(request.platform),
+        estimatedReach: 50000,
+        engagementPotential: 75,
+        competitionLevel: 'Medium',
+        bestPostingTime: ['6:00 PM'],
         platformSpecificTips: platformConfig.bestPractices
       },
       suggestions: [
         {
           type: 'caption',
-          suggestion: `Consider adding emojis to make your ${request.platform} post more engaging`,
+          suggestion: 'This is a mock suggestion.',
           impact: 'Medium'
-        },
-        {
-          type: 'timing',
-          suggestion: `Best time to post on ${request.platform} is between 6-9 PM`,
-          impact: 'High'
         }
       ],
       metadata: {
-        requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        requestId: `req_mock_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        processingTime: Math.floor(Math.random() * 3000) + 500,
+        processingTime: 100,
         platform: request.platform,
-        apiVersion: '1.0.0'
+        apiVersion: '1.0.0-mock'
       }
     };
-  }
-
-  private generateMockHashtags(
-    content: string, 
-    platform: SocialMediaPlatform, 
-    count: number
-  ) {
-    const baseHashtags = {
-      instagram: [
-        'instadaily', 'photooftheday', 'instagood', 'instalove', 'instamood',
-        'photography', 'picoftheday', 'instapic', 'lifestyle', 'beautiful',
-        'happy', 'love', 'nature', 'art', 'fashion', 'food', 'travel',
-        'fitness', 'motivation', 'inspiration', 'business', 'entrepreneur',
-        'success', 'marketing', 'branding', 'creative', 'design', 'style'
-      ],
-      tiktok: [
-        'fyp', 'foryou', 'viral', 'trending', 'tiktokmade', 'tiktokers',
-        'dance', 'comedy', 'funny', 'entertainment', 'music', 'duet',
-        'challenge', 'trend', 'viral', 'explore', 'discover', 'creators',
-        'talent', 'performance', 'skills', 'tutorial', 'howto', 'tips'
-      ],
-      twitter: [
-        'breaking', 'news', 'trending', 'discussion', 'opinion', 'thoughts',
-        'thread', 'twitter', 'social', 'media', 'tech', 'business',
-        'politics', 'sports', 'entertainment', 'culture', 'society'
-      ],
-      youtube: [
-        'youtube', 'youtuber', 'video', 'subscribe', 'content', 'creator',
-        'tutorial', 'howto', 'review', 'vlog', 'gaming', 'entertainment',
-        'education', 'music', 'comedy', 'tech', 'lifestyle', 'travel'
-      ],
-      linkedin: [
-        'linkedin', 'professional', 'business', 'career', 'networking',
-        'leadership', 'management', 'industry', 'corporate', 'b2b',
-        'sales', 'marketing', 'strategy', 'innovation', 'growth'
-      ],
-      pinterest: [
-        'pinterest', 'inspiration', 'ideas', 'diy', 'crafts', 'home',
-        'decor', 'fashion', 'style', 'beauty', 'food', 'recipes',
-        'wedding', 'design', 'art', 'photography', 'lifestyle'
-      ],
-      facebook: [
-        'facebook', 'community', 'family', 'friends', 'local', 'event',
-        'business', 'page', 'group', 'discussion', 'social', 'network'
-      ]
-    };
-
-    const platformHashtags = baseHashtags[platform] || baseHashtags.instagram;
-    const selectedHashtags = this.shuffleArray(platformHashtags).slice(0, count);
-
-    return selectedHashtags.map((tag, index) => ({
-      tag: `#${tag}`,
-      difficulty: ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)] as 'Easy' | 'Medium' | 'Hard',
-      volume: Math.floor(Math.random() * 1000000) + 1000,
-      engagement: Math.floor(Math.random() * 80) + 20,
-      trending: Math.random() > 0.7,
-      category: this.getCategoryForHashtag(tag),
-      description: `Popular ${platform} hashtag for ${tag}-related content`
-    }));
-  }
-
-  private getCategoryForHashtag(tag: string): string {
-    const categories = {
-      'lifestyle': ['lifestyle', 'daily', 'mood', 'inspiration', 'motivation'],
-      'photography': ['photo', 'pic', 'photography', 'beautiful', 'art'],
-      'business': ['business', 'entrepreneur', 'success', 'marketing', 'professional'],
-      'entertainment': ['funny', 'comedy', 'entertainment', 'viral', 'trending'],
-      'fashion': ['fashion', 'style', 'beauty', 'outfit'],
-      'travel': ['travel', 'adventure', 'explore', 'vacation'],
-      'food': ['food', 'recipe', 'cooking', 'delicious'],
-      'fitness': ['fitness', 'workout', 'health', 'gym'],
-      'technology': ['tech', 'digital', 'innovation', 'ai']
-    };
-
-    for (const [category, keywords] of Object.entries(categories)) {
-      if (keywords.some(keyword => tag.toLowerCase().includes(keyword))) {
-        return category;
-      }
-    }
-    return 'general';
-  }
-
-  private getBestPostingTimes(platform: SocialMediaPlatform): string[] {
-    const times = {
-      instagram: ['6:00 AM', '12:00 PM', '6:00 PM', '9:00 PM'],
-      tiktok: ['6:00 AM', '10:00 AM', '7:00 PM', '9:00 PM'],
-      twitter: ['9:00 AM', '12:00 PM', '3:00 PM', '6:00 PM'],
-      youtube: ['2:00 PM', '4:00 PM', '6:00 PM', '8:00 PM'],
-      linkedin: ['8:00 AM', '12:00 PM', '2:00 PM', '5:00 PM'],
-      pinterest: ['8:00 PM', '9:00 PM', '10:00 PM', '11:00 PM'],
-      facebook: ['9:00 AM', '1:00 PM', '6:00 PM', '8:00 PM']
-    };
-
-    return times[platform] || times.instagram;
-  }
-
-  private shuffleArray<T>(array: T[]): T[] {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
   }
 }
 
-// Export singleton instance
-export const hashtagAPI = new HashtagAPI();
+// API client for the main application, pointing to the Railway production API
+export const productionAPI = new HashtagAPI('https://hyperhash-production-2512.up.railway.app');
+
+// API client specifically for the Vercel-hosted Gemini endpoint
+export const geminiAPI = new HashtagAPI('/api');
 
 // Export utility functions
 export const getPlatformConfig = (platform: SocialMediaPlatform) => {
@@ -268,17 +143,4 @@ export const getPlatformConfig = (platform: SocialMediaPlatform) => {
 
 export const getAllPlatforms = (): SocialMediaPlatform[] => {
   return Object.keys(PLATFORM_CONFIGS) as SocialMediaPlatform[];
-};
-
-export const validateHashtagRequest = (request: HashtagRequest): boolean => {
-  if (!request.content || !request.platform) {
-    return false;
-  }
-
-  const config = PLATFORM_CONFIGS[request.platform];
-  if (!config) {
-    return false;
-  }
-
-  return true;
 };
