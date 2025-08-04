@@ -6,14 +6,66 @@ import {
   PLATFORM_CONFIGS 
 } from '@/types/api';
 import { AuthService } from '@/lib/auth/service';
+import { hashtagRateLimiter } from '@/lib/rate-limiter';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
+// Input validation schema
+const validateInput = (body: any): { valid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!body.title?.trim() || body.title.length > 200) {
+    errors.push('Title must be 1-200 characters');
+  }
+  
+  if (!body.description?.trim() || body.description.length > 2000) {
+    errors.push('Description must be 1-2000 characters');
+  }
+  
+  if (!body.platform || !(body.platform in PLATFORM_CONFIGS)) {
+    errors.push('Valid platform required');
+  }
+  
+  return { valid: errors.length === 0, errors };
+};
 
 export async function POST(request: NextRequest) {
   let body: HashtagRequest;
   
   try {
+    // Get client IP for rate limiting
+    const clientIP = request.headers.get('x-forwarded-for') || 
+                    request.headers.get('x-real-ip') || 
+                    'unknown';
+    
+    // Check rate limit
+    if (!hashtagRateLimiter.isAllowed(clientIP)) {
+      const resetTime = hashtagRateLimiter.getResetTime(clientIP);
+      return NextResponse.json(
+        { 
+          error: 'Rate limit exceeded. Please try again later.',
+          resetTime: new Date(resetTime).toISOString()
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': resetTime.toString()
+          }
+        }
+      );
+    }
+    
     body = await request.json();
+    
+    // Validate input
+    const validation = validateInput(body);
+    if (!validation.valid) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validation.errors },
+        { status: 400 }
+      );
+    }
     
     const platformConfig = PLATFORM_CONFIGS[body.platform];
     if (!platformConfig) {

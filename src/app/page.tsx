@@ -60,7 +60,7 @@ export default function Home() {
     setError('');
     
     try {
-      const response = await fetch('https://hyperhash-production-2512.up.railway.app/api/generate-hashtags', {
+      const response = await fetch('/api/hashtags/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

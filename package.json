@@ -7,12 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "analyze": "ANALYZE=true npm run build",
     "blog:generate": "tsx scripts/seo-gen.ts",
     "blog:weekly": "tsx scripts/blog-automation.ts weekly",
     "blog:topic": "tsx scripts/blog-automation.ts topic",
     "lighthouse": "lhci autorun",
     "seo:check": "tsx scripts/seo-checker.ts",
-    "performance": "npm run build && npm run lighthouse"
+    "performance": "npm run build && npm run lighthouse",
+    "security:audit": "npm audit --audit-level moderate",
+    "test:build": "npm run build && npm run start & sleep 5 && curl http://localhost:3000 && pkill -f 'next start'"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
