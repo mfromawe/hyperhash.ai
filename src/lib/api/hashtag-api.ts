@@ -82,8 +82,9 @@ class HashtagAPI {
 
       return await response.json();
     } catch (error) {
-      console.error(`API request to ${this.baseUrl} failed, falling back to mock:`, error);
-      return this.generateHashtagsMock(request);
+      console.error(`API request to ${this.baseUrl} failed:`, error);
+      // Re-throw the error to be caught by the UI component
+      throw error;
     }
   }
 
