@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/database/prisma';
+import { DatabaseUtil } from '@/lib/database-util';
 import { AuthUtils } from './utils';
 import { SUBSCRIPTION_PLANS } from './config';
 
@@ -27,6 +28,9 @@ export class AuthService {
   // User Registration
   static async register(data: RegisterData): Promise<AuthResult> {
     try {
+      // Ensure database connection
+      await DatabaseUtil.ensureConnection();
+      
       // Validate email
       if (!AuthUtils.validateEmail(data.email)) {
         return { success: false, error: 'Invalid email format' };
@@ -113,6 +117,9 @@ export class AuthService {
   // User Login
   static async login(data: LoginData): Promise<AuthResult> {
     try {
+      // Ensure database connection
+      await DatabaseUtil.ensureConnection();
+      
       // Find user with subscription
       const user = await prisma.user.findUnique({
         where: { email: data.email.toLowerCase() },

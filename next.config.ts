@@ -37,6 +37,21 @@ const nextConfig: NextConfig = {
     pagesBufferLength: 2,
   },
 
+  // Webpack configuration for Prisma
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // Exclude Prisma binaries from webpack bundling on server
+      config.externals = [...(config.externals || []), '_http_common'];
+    }
+    
+    // Handle Prisma client properly
+    config.resolve.alias = {
+      ...config.resolve.alias,
+    };
+    
+    return config;
+  },
+
   headers: async () => {
     return [
       {
