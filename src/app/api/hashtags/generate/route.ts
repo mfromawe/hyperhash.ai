@@ -14,12 +14,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const validateInput = (body: any): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
-  if (!body.title?.trim() || body.title.length > 200) {
-    errors.push('Title must be 1-200 characters');
-  }
-  
-  if (!body.description?.trim() || body.description.length > 2000) {
-    errors.push('Description must be 1-2000 characters');
+  if (!body.content?.trim() || body.content.length > 2000) {
+    errors.push('Content must be 1-2000 characters');
   }
   
   if (!body.platform || !(body.platform in PLATFORM_CONFIGS)) {
