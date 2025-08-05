@@ -2,36 +2,41 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import PayTRPayment from '@/components/payment/PayTRPayment';
 
-// Stripe plans tanımı
-const STRIPE_PLANS = {
+// PayTR plans (Türk Lirası cinsinden)
+const PAYTR_PLANS = {
   free: {
-    name: 'Free',
+    name: 'Ücretsiz',
     price: 0,
+    currency: 'TL',
     features: [
-      '10 hashtag generations per month',
-      'Basic platform support',
-      'Community support'
+      'Ayda 50 hashtag üretimi',
+      'Temel platform desteği',
+      'Topluluk desteği'
     ]
   },
   pro: {
     name: 'Pro',
-    price: 999,
+    price: 299,
+    currency: 'TL',
     features: [
-      '500 hashtag generations per month',
-      'All platforms',
-      'Advanced analytics',
-      'Priority support'
+      'Ayda 1000 hashtag üretimi',
+      'Tüm platformlar',
+      'Gelişmiş analitik',
+      'Öncelikli destek'
     ]
   },
-  enterprise: {
-    name: 'Enterprise',
-    price: 2999,
+  premium: {
+    name: 'Premium',
+    price: 599,
+    currency: 'TL',
     features: [
-      'Unlimited hashtag generations',
-      'All platforms + early access',
-      'API access',
-      'Dedicated support'
+      'Sınırsız hashtag üretimi',
+      'Tüm platformlar + erken erişim',
+      'API erişimi',
+      'Özel destek',
+      'Toplu hashtag indirme'
     ]
   }
 } as const;
@@ -39,8 +44,9 @@ const STRIPE_PLANS = {
 export default function PricingPage() {
   const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
-  const handleSubscribe = async (planType: string) => {
+  const handlePlanSelect = (planType: string) => {
     if (!user) {
       window.location.href = '/auth?tab=login';
       return;
@@ -51,110 +57,165 @@ export default function PricingPage() {
       return;
     }
 
-    setLoading(planType);
-
-    try {
-      const response = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ planType }),
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-    } finally {
-      setLoading(null);
-    }
+    setSelectedPlan(planType);
   };
 
-  const getCurrentPlan = () => {
-    if (!user?.subscription) return 'free';
-    return user.subscription.planId || 'free';
-  };
-
-  const currentPlan = getCurrentPlan();
+  if (selectedPlan && selectedPlan !== 'free') {
+    const plan = PAYTR_PLANS[selectedPlan as keyof typeof PAYTR_PLANS];
+    return (
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <button
+              onClick={() => setSelectedPlan(null)}
+              className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center"
+            >
+              ← Planlara Geri Dön
+            </button>
+            <h1 className="text-3xl font-bold text-gray-900">Ödeme</h1>
+          </div>
+          
+          <PayTRPayment
+            planType={selectedPlan as 'pro' | 'premium'}
+            amount={plan.price}
+            planName={plan.name}
+            features={plan.features}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
-            Choose Your Plan
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
+            Fiyatlandırma
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Unlock AI-powered hashtag generation for your social media success
+          <p className="mt-4 text-xl text-gray-600">
+            İhtiyacınıza uygun planı seçin
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {Object.entries(STRIPE_PLANS).map(([key, plan]) => {
-            const isCurrentPlan = currentPlan === key;
-            const isPopular = key === 'pro';
+        <div className="mt-16">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {Object.entries(PAYTR_PLANS).map(([key, plan]) => {
+              const isCurrentPlan = false; // TODO: Get from user's subscription
+              const isPopular = key === 'pro';
 
-            return (
-              <div
-                key={key}
-                className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${
-                  isPopular ? 'border-blue-500 scale-105' : 'border-gray-200 dark:border-gray-700'
-                }`}
-              >
-                {isPopular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-semibold">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-
-                <div className="p-8">
-                  <div className="text-center mb-8">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              return (
+                <div
+                  key={key}
+                  className={`rounded-lg shadow-lg overflow-hidden ${
+                    isPopular
+                      ? 'ring-2 ring-blue-500 ring-opacity-50'
+                      : 'border border-gray-200'
+                  } bg-white`}
+                >
+                  {isPopular && (
+                    <div className="bg-blue-500 text-white text-center py-2 text-sm font-medium">
+                      En Popüler
+                    </div>
+                  )}
+                  
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold text-gray-900 text-center">
                       {plan.name}
                     </h3>
-                    <div className="mb-4">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                        ${(plan.price / 100).toFixed(2)}
+                    <div className="mt-4 text-center">
+                      <span className="text-4xl font-bold text-gray-900">
+                        ₺{plan.price}
                       </span>
-                      <span className="text-gray-600 dark:text-gray-400">/month</span>
+                      {plan.price > 0 && (
+                        <span className="text-gray-500">/ay</span>
+                      )}
+                    </div>
+
+                    <ul className="mt-6 space-y-3">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-start">
+                          <svg
+                            className="flex-shrink-0 w-5 h-5 text-green-500 mt-0.5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          <span className="ml-3 text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-8">
+                      <button
+                        onClick={() => handlePlanSelect(key)}
+                        disabled={loading === key || isCurrentPlan}
+                        className={`w-full py-3 px-4 rounded-lg font-medium transition duration-200 ${
+                          isCurrentPlan
+                            ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                            : isPopular
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                            : 'bg-gray-900 hover:bg-gray-800 text-white'
+                        }`}
+                      >
+                        {loading === key 
+                          ? 'İşleniyor...' 
+                          : isCurrentPlan 
+                          ? 'Mevcut Plan' 
+                          : key === 'free'
+                          ? 'Ücretsiz Başla'
+                          : `${plan.name} Planını Seç`
+                        }
+                      </button>
                     </div>
                   </div>
-
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-5 h-5 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mt-0.5">
-                          <span className="text-green-600 dark:text-green-400 text-sm">✓</span>
-                        </div>
-                        <span className="text-gray-700 dark:text-gray-300 text-sm">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button
-                    onClick={() => handleSubscribe(key)}
-                    disabled={loading === key || isCurrentPlan}
-                    className={`w-full py-3 px-6 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                      isCurrentPlan
-                        ? 'bg-green-100 text-green-700 cursor-not-allowed'
-                        : isPopular
-                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700'
-                        : 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-800'
-                    }`}
-                  >
-                    {loading === key ? 'Processing...' : isCurrentPlan ? 'Current Plan' : `Choose ${plan.name}`}
-                  </button>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8">
+            Sık Sorulan Sorular
+          </h2>
+          
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Ödeme güvenli mi?
+              </h3>
+              <p className="text-gray-600">
+                Evet, tüm ödemeler PayTR aracılığıyla güvenli bir şekilde işlenir. 
+                Kredi kartı bilgileriniz şifrelenir ve güvenli sunucularda saklanır.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Planımı istediğim zaman değiştirebilir miyim?
+              </h3>
+              <p className="text-gray-600">
+                Evet, planınızı istediğiniz zaman yükseltebilir veya düşürebilirsiniz. 
+                Değişiklikler bir sonraki fatura döneminde geçerli olur.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-lg p-6 shadow-md">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Para iadesi var mı?
+              </h3>
+              <p className="text-gray-600">
+                7 günlük ücretsiz deneme süresi sonunda memnun kalmazsanız, 
+                tam para iadesi alabilirsiniz.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

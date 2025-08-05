@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { seoConfig, structuredData } from "@/lib/seo-config";
 import { Analytics } from "@/components/Analytics";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
@@ -144,6 +145,7 @@ export default function RootLayout({
           {children}
         </AuthProvider>
         <Analytics />
+        <VercelAnalytics />
       </body>
     </html>
   );

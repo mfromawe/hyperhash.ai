@@ -260,43 +260,6 @@ export default function ToolsPage() {
             </div>
           </div>
 
-          {/* Technical Implementation */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
-              Technical Implementation
-            </h2>
-            <div className="bg-gray-900 rounded-xl p-8 text-white">
-              <h3 className="text-xl font-semibold mb-4">🔧 API Endpoints</h3>
-              <div className="space-y-4 font-mono text-sm">
-                <div className="bg-gray-800 p-4 rounded-lg">
-                  <div className="text-green-400 mb-2">POST /api/hashtags/instagram</div>
-                  <div className="text-gray-300">Instagram-specific hashtag generation with Reels optimization</div>
-                </div>
-                <div className="bg-gray-800 p-4 rounded-lg">
-                  <div className="text-green-400 mb-2">POST /api/hashtags/tiktok</div>
-                  <div className="text-gray-300">TikTok trending hashtags with FYP algorithm targeting</div>
-                </div>
-                <div className="bg-gray-800 p-4 rounded-lg">
-                  <div className="text-green-400 mb-2">POST /api/hashtags/twitter</div>
-                  <div className="text-gray-300">Twitter hashtag optimization with trending topics integration</div>
-                </div>
-                <div className="bg-gray-800 p-4 rounded-lg">
-                  <div className="text-green-400 mb-2">GET /api/hashtags/{`{platform}`}/trending</div>
-                  <div className="text-gray-300">Real-time trending hashtags for any platform</div>
-                </div>
-              </div>
-              <div className="mt-6 text-center">
-                <p className="text-gray-400 mb-4">
-                  Each endpoint returns platform-optimized results with analytics and suggestions
-                </p>
-                <div className="inline-flex items-center bg-blue-600 px-6 py-3 rounded-lg">
-                  <span className="mr-2">💡</span>
-                  Ready for production API integration
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* CTA Section */}
           <div className="text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white">
             <h2 className="text-3xl font-bold mb-4">
