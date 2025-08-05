@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HyperHash Favicon Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 2rem;
+            background: #f8fafc;
+        }
+        .favicon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .favicon-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            text-align: center;
+        }
+        .favicon-display {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            color: #7C3AED;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .size-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1># HyperHash Favicon Test</h1>
+    <p style="text-align: center; color: #6b7280; margin-bottom: 2rem;">
+        Purple gradient design with white hashtag symbol
+    </p>
+    
+    <div class="favicon-grid">
+        <div class="favicon-item">
+            <div class="size-label">16x16 (Browser Tab)</div>
+            <div class="favicon-display">
+                <img src="/favicon-16x16.svg" alt="16x16 favicon" style="image-rendering: pixelated;">
+            </div>
+        </div>
+        
+        <div class="favicon-item">
+            <div class="size-label">32x32 (Default)</div>
+            <div class="favicon-display">
+                <img src="/favicon-32x32.svg" alt="32x32 favicon">
+            </div>
+        </div>
+        
+        <div class="favicon-item">
+            <div class="size-label">48x48 (Windows)</div>
+            <div class="favicon-display">
+                <img src="/favicon-48x48.svg" alt="48x48 favicon">
+            </div>
+        </div>
+        
+        <div class="favicon-item">
+            <div class="size-label">64x64 (High DPI)</div>
+            <div class="favicon-display">
+                <img src="/favicon-64x64.svg" alt="64x64 favicon">
+            </div>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-top: 2rem;">
+        <h2 style="color: #7C3AED; margin-bottom: 1rem;">Browser Tab Preview</h2>
+        <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: white; border-radius: 4px; border: 1px solid #d1d5db;">
+                <img src="/favicon-16x16.svg" alt="favicon" width="16" height="16">
+                <span style="font-size: 14px; color: #374151;">HyperHash - AI Hashtag Generator</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

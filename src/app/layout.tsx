@@ -103,6 +103,16 @@ export const metadata: Metadata = {
     'msapplication-TileColor': '#2563eb',
     'msapplication-config': '/browserconfig.xml',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16x16.svg', sizes: '16x16', type: 'image/svg+xml' },
+      { url: '/favicon-32x32.svg', sizes: '32x32', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon-64x64.svg',
+  },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
