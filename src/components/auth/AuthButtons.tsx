@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUserStore } from '@/store/userStore';
 import AuthModal from './AuthModal';
 
 export default function AuthButtons() {
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading } = useUserStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 

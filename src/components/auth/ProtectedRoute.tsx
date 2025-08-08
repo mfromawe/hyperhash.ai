@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/contexts/AuthContext';
+import { useUserStore } from '@/store/userStore';
 import { useEffect, useState } from 'react';
 import AuthModal from './AuthModal';
 
@@ -17,7 +17,7 @@ export default function ProtectedRoute({
   requireAuth = true,
   requiredPlan = 'free'
 }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+  const { user, loading } = useUserStore();
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/contexts/AuthContext';
+import { useUserStore } from '@/store/userStore';
 import { useEffect, useState } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ interface UsageStats {
 }
 
 export default function Dashboard() {
-  const { user, loading } = useAuth();
+  const { user, loading } = useUserStore();
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
 

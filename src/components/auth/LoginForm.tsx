@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUserStore } from '@/store/userStore';
 import Link from 'next/link';
 
 interface LoginFormProps {
@@ -16,7 +16,7 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormPr
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const { login } = useAuth();
+  const { login } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

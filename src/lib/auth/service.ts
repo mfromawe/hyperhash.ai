@@ -222,6 +222,24 @@ export class AuthService {
     }
   }
 
+  // Get user by email
+  static async getUserByEmail(email: string): Promise<AuthResult> {
+    try {
+      await DatabaseUtil.ensureConnection();
+      const user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+        include: { subscription: true }
+      });
+      if (!user) {
+        return { success: false, error: 'User not found' };
+      }
+      return { success: true, user };
+    } catch (error) {
+      console.error('Get user by email error:', error);
+      return { success: false, error: 'An error occurred while fetching user by email' };
+    }
+  }
+
   // Get user usage stats for current month
   static async getUserUsage(userId: string): Promise<any> {
     try {
@@ -265,6 +283,32 @@ export class AuthService {
     } catch (error) {
       console.error('Get usage error:', error);
       return null;
+    }
+  }
+
+  // Update user subscription
+  static async updateSubscription(userId: string, newPlanId: string): Promise<AuthResult> {
+    try {
+      await DatabaseUtil.ensureConnection();
+
+      const updatedSubscription = await prisma.subscription.update({
+        where: { userId: userId },
+        data: {
+          planId: newPlanId,
+          status: 'active',
+          // You might want to update other fields like startDate, endDate, etc.
+        },
+      });
+
+      const updatedUser = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { subscription: true },
+      });
+
+      return { success: true, user: updatedUser, message: 'Subscription updated successfully' };
+    } catch (error) {
+      console.error('Subscription update error:', error);
+      return { success: false, error: 'An error occurred during subscription update' };
     }
   }
 

@@ -4,7 +4,10 @@ import "./globals.css";
 import { seoConfig, structuredData } from "@/lib/seo-config";
 import { Analytics } from "@/components/Analytics";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
-import { AuthProvider } from "@/contexts/AuthContext";
+import AuthInitializer from "@/components/auth/AuthInitializer";
+import { ToastProvider } from "@/components/ui/Toast";
+import NavBar from "@/components/ui/NavBar";
+import Footer from "@/components/ui/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -121,8 +124,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => { try { const t = localStorage.getItem('theme'); const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; const next = t || (prefersDark ? 'dark' : 'light'); document.documentElement.setAttribute('data-theme', next); } catch (e) {} })();`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -151,9 +159,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {/* Skip to content for keyboard users */}
+        <a href="#main-content" className="skip-link">Skip to content</a>
+        <div className="app-backdrop" aria-hidden="true" />
+        <AuthInitializer />
+        <ToastProvider>
+          {/* Global NavBar */}
+          <NavBar />
+          {/* Main content */}
+          <main id="main-content" role="main" tabIndex={-1}>{children}</main>
+          {/* Global Footer */}
+          <Footer />
+        </ToastProvider>
         <Analytics />
         <VercelAnalytics />
       </body>

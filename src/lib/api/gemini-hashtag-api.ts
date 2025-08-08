@@ -8,39 +8,18 @@ import {
 } from '@/types/api';
 
 class GeminiHashtagAPI {
-  private genAI: GoogleGenerativeAI;
-  private model: any;
+  private genAI: GoogleGenerativeAI | null = null;
+  private model: any = null;
 
   constructor() {
-    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      console.warn('Gemini API key not found, using mock responses');
-      this.genAI = null as any;
-      this.model = null;
-    } else {
-      this.genAI = new GoogleGenerativeAI(apiKey);
-      this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    }
+    // Never read API key on the client. Use server route for real calls.
+    this.genAI = null;
+    this.model = null;
   }
 
   async generateHashtags(request: HashtagRequest): Promise<HashtagResponse> {
-    if (!this.model) {
-      return this.generateMockResponse(request);
-    }
-
-    try {
-      const platformConfig = PLATFORM_CONFIGS[request.platform];
-      const prompt = this.buildPrompt(request, platformConfig);
-      
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      
-      return this.parseGeminiResponse(text, request, platformConfig);
-    } catch (error) {
-      console.error('Gemini API error:', error);
-      return this.generateMockResponse(request);
-    }
+    // Always mock on the client. Real generation happens through /api route.
+    return this.generateMockResponse(request);
   }
 
   private buildPrompt(request: HashtagRequest, platformConfig: any): string {

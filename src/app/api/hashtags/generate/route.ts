@@ -8,7 +8,12 @@ import {
 import { AuthService } from '@/lib/auth/service';
 import { hashtagRateLimiter } from '@/lib/rate-limiter';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+// Lazy initialize Gemini client using server-only env var
+function getGeminiClient() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+  return new GoogleGenerativeAI(apiKey);
+}
 
 // Input validation schema
 const validateInput = (body: any): { valid: boolean; errors: string[] } => {
@@ -95,7 +100,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const client = getGeminiClient();
+    if (!client) {
+      return NextResponse.json(
+        { error: 'Gemini API key is missing on server. Set GEMINI_API_KEY in your environment variables.' },
+        { status: 500 }
+      );
+    }
+
+    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
     
     const targetCount = Math.min(
       body.maxHashtags || platformConfig.optimalHashtags,

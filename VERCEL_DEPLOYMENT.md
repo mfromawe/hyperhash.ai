@@ -53,6 +53,8 @@ RESEND_API_KEY="re_..."
 EMAIL_FROM="noreply@yourdomain.com"
 ```
 
+> Important: Do NOT create `NEXT_PUBLIC_GEMINI_API_KEY`. The Gemini key must remain server-only.
+
 ### 2. Database Setup
 
 #### Option A: Vercel Postgres (Recommended)
@@ -169,4 +171,4 @@ DATABASE_URL="your_production_db_url" npx prisma db push
 ---
 
 **Last Updated**: January 2025
-**Version**: 1.0.0
+**Version**: 1.0.1
