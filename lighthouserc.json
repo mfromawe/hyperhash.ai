@@ -24,7 +24,7 @@
     "server": {
       "command": "npm start",
       "port": 3000,
-      "wait": 3000
+      "wait": 10000
     }
   }
 }
