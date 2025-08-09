@@ -356,4 +356,37 @@ export class AuthService {
       return { success: false, error: 'Subscription update failed' };
     }
   }
+
+  // NEW: Verify email address
+  static async verifyEmail(token: string): Promise<AuthResult> {
+    try {
+      if (!token) return { success: false, error: 'Token required' };
+      const user = await prisma.user.findFirst({ where: { verificationToken: token } });
+      if (!user) return { success: false, error: 'Invalid token' };
+      if (user.emailVerified) return { success: true, user };
+      const updated = await prisma.user.update({ where: { id: user.id }, data: { emailVerified: true, emailVerifiedAt: new Date(), verificationToken: null } });
+      return { success: true, user: updated, message: 'Email verified' };
+    } catch (e) {
+      console.error('verifyEmail error', e);
+      return { success: false, error: 'Verification failed' };
+    }
+  }
+
+  // NEW: Resend verification email
+  static async resendVerification(email: string): Promise<AuthResult> {
+    try {
+      if (!email) return { success: false, error: 'Email required' };
+      const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+      if (!user) return { success: false, error: 'User not found' };
+      if (user.emailVerified) return { success: false, error: 'Already verified' };
+      const newToken = AuthUtils.generateRandomToken();
+      const updated = await prisma.user.update({ where: { id: user.id }, data: { verificationToken: newToken } });
+      const { sendVerificationEmail } = await import('@/lib/email');
+      await sendVerificationEmail(updated.email, newToken);
+      return { success: true, user: updated, message: 'Verification email resent' };
+    } catch (e) {
+      console.error('resendVerification error', e);
+      return { success: false, error: 'Resend failed' };
+    }
+  }
 }
