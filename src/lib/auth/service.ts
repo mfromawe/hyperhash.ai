@@ -389,4 +389,55 @@ export class AuthService {
       return { success: false, error: 'Resend failed' };
     }
   }
+
+  // NEW: Request password reset
+  static async requestPasswordReset(email: string): Promise<AuthResult> {
+    try {
+      await DatabaseUtil.ensureConnection();
+      if (!email) return { success: false, error: 'Email required' };
+      const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+      // For security, always return success even if user not found
+      if (!user) return { success: true, message: 'If the email exists, a reset link was sent' };
+      // Generate unique token
+      let token = AuthUtils.generateRandomToken();
+      // Simple retry loop for rare collision
+      for (let i = 0; i < 3; i++) {
+        const existing = await prisma.passwordResetToken.findUnique({ where: { token } });
+        if (!existing) break; else token = AuthUtils.generateRandomToken();
+      }
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+      await prisma.passwordResetToken.create({ data: { email: user.email, token, expiresAt } });
+      const { sendPasswordResetEmail } = await import('@/lib/email');
+      await sendPasswordResetEmail(user.email, token);
+      return { success: true, message: 'If the email exists, a reset link was sent' };
+    } catch (e) {
+      console.error('requestPasswordReset error', e);
+      return { success: false, error: 'Request failed' };
+    }
+  }
+
+  // NEW: Reset password
+  static async resetPassword(token: string, newPassword: string): Promise<AuthResult> {
+    try {
+      await DatabaseUtil.ensureConnection();
+      if (!token || !newPassword) return { success: false, error: 'Token and password required' };
+      const validation = AuthUtils.validatePassword(newPassword);
+      if (!validation.valid) return { success: false, error: validation.errors.join(', ') };
+      const prt = await prisma.passwordResetToken.findUnique({ where: { token } });
+      if (!prt || prt.used || prt.expiresAt < new Date()) {
+        return { success: false, error: 'Invalid or expired token' };
+      }
+      const user = await prisma.user.findUnique({ where: { email: prt.email } });
+      if (!user) return { success: false, error: 'User not found' };
+      const passwordHash = await AuthUtils.hashPassword(newPassword);
+      await prisma.$transaction(async (tx:any) => {
+        await tx.user.update({ where: { id: user.id }, data: { passwordHash, loginAttempts: 0, lockedUntil: null } });
+        await tx.passwordResetToken.update({ where: { token }, data: { used: true } });
+      });
+      return { success: true, message: 'Password updated successfully' };
+    } catch (e) {
+      console.error('resetPassword error', e);
+      return { success: false, error: 'Reset failed' };
+    }
+  }
 }
