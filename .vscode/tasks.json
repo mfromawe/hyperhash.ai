@@ -1,12 +1,4 @@
 {
 	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "shell",
-			"label": "git-stage-commit-paytr-removal-step1",
-			"command": "git add . && git commit -m \"chore: remove PayTR UI/pages fetches and pricing copy; keep PayPal only\"",
-			"group": "none",
-			"isBackground": false
-		}
-	]
+	"tasks": []
 }
