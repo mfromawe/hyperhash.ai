@@ -1,9 +1,7 @@
-
 'use client';
 
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useState } from 'react';
-import { useUserStore } from '@/store/userStore';
 
 interface PayPalButtonProps {
   paypalPlanId: string; // The actual PayPal Plan ID
@@ -12,27 +10,23 @@ interface PayPalButtonProps {
 
 const PayPalButtonWrapper = ({ paypalPlanId, planName }: PayPalButtonProps) => {
   const [error, setError] = useState<string | null>(null);
-  const { token } = useUserStore();
 
   const createSubscription = async (data: any, actions: any) => {
     try {
-      const res = await fetch('/api/paypal/orders', { // This endpoint will now create a subscription
+      const res = await fetch('/api/paypal/orders', { // Internal endpoint creates subscription server-side
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ planId: paypalPlanId }), // Send the PayPal plan ID
+        body: JSON.stringify({ planId: paypalPlanId }),
+        credentials: 'include'
       });
 
       const subscription = await res.json();
       if (subscription.error) {
         throw new Error(subscription.error);
       }
-      // The PayPal API returns a subscription ID, which we pass to actions.subscription.create
-      return actions.subscription.create({
-        plan_id: paypalPlanId,
-      });
+      return actions.subscription.create({ plan_id: paypalPlanId });
     } catch (err: any) {
       setError(`Failed to create subscription: ${err.message || err}`);
       return '';
@@ -79,8 +73,5 @@ const PayPalPayments = ({ paypalPlanId, planName }: PayPalButtonProps) => {
     </PayPalScriptProvider>
   );
 };
-
-export default PayPalPayments;
-
 
 export default PayPalPayments;

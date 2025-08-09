@@ -222,24 +222,6 @@ export class AuthService {
     }
   }
 
-  // Get user by email
-  static async getUserByEmail(email: string): Promise<AuthResult> {
-    try {
-      await DatabaseUtil.ensureConnection();
-      const user = await prisma.user.findUnique({
-        where: { email: email.toLowerCase() },
-        include: { subscription: true }
-      });
-      if (!user) {
-        return { success: false, error: 'User not found' };
-      }
-      return { success: true, user };
-    } catch (error) {
-      console.error('Get user by email error:', error);
-      return { success: false, error: 'An error occurred while fetching user by email' };
-    }
-  }
-
   // Get user usage stats for current month
   static async getUserUsage(userId: string): Promise<any> {
     try {
@@ -286,32 +268,6 @@ export class AuthService {
     }
   }
 
-  // Update user subscription
-  static async updateSubscription(userId: string, newPlanId: string): Promise<AuthResult> {
-    try {
-      await DatabaseUtil.ensureConnection();
-
-      const updatedSubscription = await prisma.subscription.update({
-        where: { userId: userId },
-        data: {
-          planId: newPlanId,
-          status: 'active',
-          // You might want to update other fields like startDate, endDate, etc.
-        },
-      });
-
-      const updatedUser = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { subscription: true },
-      });
-
-      return { success: true, user: updatedUser, message: 'Subscription updated successfully' };
-    } catch (error) {
-      console.error('Subscription update error:', error);
-      return { success: false, error: 'An error occurred during subscription update' };
-    }
-  }
-
   // Track hashtag generation
   static async trackHashtagGeneration(userId: string, count: number = 1): Promise<boolean> {
     try {
@@ -340,6 +296,64 @@ export class AuthService {
     } catch (error) {
       console.error('Track usage error:', error);
       return false;
+    }
+  }
+
+  // NEW: Get user by email (used in PayPal webhooks)
+  static async getUserByEmail(email: string): Promise<AuthResult> {
+    try {
+      await DatabaseUtil.ensureConnection();
+      if (!email) return { success: false, error: 'Email required' };
+      const user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+        include: { subscription: true }
+      });
+      if (!user) return { success: false, error: 'User not found' };
+      if (!user.isActive) return { success: false, error: 'User inactive' };
+      return { success: true, user };
+    } catch (error) {
+      console.error('getUserByEmail error:', error);
+      return { success: false, error: 'Lookup failed' };
+    }
+  }
+
+  // NEW: Update subscription plan for a user (used in PayPal webhooks)
+  static async updateSubscription(userId: string, planId: string) {
+    try {
+      await DatabaseUtil.ensureConnection();
+      if (!userId) return { success: false, error: 'User ID required' };
+      if (!planId || !(planId in SUBSCRIPTION_PLANS)) {
+        return { success: false, error: 'Invalid planId' };
+      }
+
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      if (!user) return { success: false, error: 'User not found' };
+
+      const periodStart = new Date();
+      // Simple monthly period end (30 days); adjust if you have real billing cycles
+      const periodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+      const subscription = await prisma.subscription.upsert({
+        where: { userId },
+        update: {
+          planId,
+          status: 'active',
+          currentPeriodStart: periodStart,
+            currentPeriodEnd: periodEnd,
+        },
+        create: {
+          userId,
+          planId,
+          status: 'active',
+          currentPeriodStart: periodStart,
+          currentPeriodEnd: periodEnd,
+        }
+      });
+
+      return { success: true, user: { ...user, subscription }, message: 'Subscription updated' };
+    } catch (error) {
+      console.error('updateSubscription error:', error);
+      return { success: false, error: 'Subscription update failed' };
     }
   }
 }
