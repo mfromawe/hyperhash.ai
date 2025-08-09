@@ -66,6 +66,18 @@ export default function AuthButtons() {
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     {user.email}
                   </p>
+                  {!user.emailVerified && (
+                    <button
+                      onClick={async () => {
+                        await fetch('/api/auth/resend-verification', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: user.email }) });
+                        setShowUserMenu(false);
+                        alert('Verification email sent');
+                      }}
+                      className="mt-2 inline-flex items-center gap-1 text-xs px-2 py-1 rounded bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200"
+                    >
+                      ⚠️ Verify Email
+                    </button>
+                  )}
                 </div>
 
                 {/* Menu Items */}

@@ -8,6 +8,7 @@ import AuthInitializer from "@/components/auth/AuthInitializer";
 import { ToastProvider } from "@/components/ui/Toast";
 import NavBar from "@/components/ui/NavBar";
 import Footer from "@/components/ui/Footer";
+import EmailVerificationBanner from '@/components/ui/EmailVerificationBanner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -166,6 +167,7 @@ export default function RootLayout({
         <ToastProvider>
           {/* Global NavBar */}
           <NavBar />
+          <EmailVerificationBanner />
           {/* Main content */}
           <main id="main-content" role="main" tabIndex={-1}>{children}</main>
           {/* Global Footer */}
