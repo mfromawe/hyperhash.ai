@@ -1,38 +1,13 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
 
 function PaymentFailedContent() {
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [paymentData, setPaymentData] = useState<any>(null);
-
-  useEffect(() => {
-    const reason = searchParams.get('reason');
-    const merchant_oid = searchParams.get('merchant_oid');
-    
-    // Ödeme durumunu kontrol et
-    fetch(`/api/paytr/failed?reason=${reason}&merchant_oid=${merchant_oid}`)
-      .then(res => res.json())
-      .then(data => {
-        setPaymentData(data);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Payment verification error:', error);
-        setIsLoading(false);
-      });
-  }, [searchParams]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-500"></div>
-      </div>
-    );
-  }
+  const reason = searchParams.get('reason');
+  const merchant_oid = searchParams.get('merchant_oid');
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -51,22 +26,22 @@ function PaymentFailedContent() {
           </p>
         </div>
 
-        {paymentData && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            {paymentData.reason && (
+        {(reason || merchant_oid) && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
+            {reason && (
               <p className="text-sm text-red-800 mb-2">
-                <strong>Sebep:</strong> {paymentData.reason}
+                <strong>Sebep:</strong> {reason}
               </p>
             )}
-            {paymentData.merchant_oid && (
+            {merchant_oid && (
               <p className="text-sm text-red-800">
-                <strong>İşlem ID:</strong> {paymentData.merchant_oid}
+                <strong>İşlem ID:</strong> {merchant_oid}
               </p>
             )}
           </div>
         )}
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-left">
           <h3 className="text-sm font-medium text-yellow-800 mb-2">Olası Sebepler:</h3>
           <ul className="text-sm text-yellow-700 space-y-1">
             <li>• Yetersiz bakiye</li>

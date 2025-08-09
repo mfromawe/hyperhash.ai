@@ -1,3 +1,4 @@
+// Deprecated: PayTR callback route (retained temporarily)
 // PayTR callback handler
 import { NextRequest, NextResponse } from 'next/server';
 import { paytrService } from '@/lib/paytr/client';

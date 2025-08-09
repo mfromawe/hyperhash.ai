@@ -45,6 +45,20 @@
   /* Layout */
   --container-max: 1280px;
   --container-pad: 24px;
+
+  /* Typography Scale */
+  --font-size-xs: 0.75rem;   /*12*/
+  --font-size-sm: 0.875rem;  /*14*/
+  --font-size-base: 1rem;    /*16*/
+  --font-size-md: 1.125rem;  /*18*/
+  --font-size-lg: 1.25rem;   /*20*/
+  --font-size-xl: 1.5rem;    /*24*/
+  --font-size-2xl: 1.875rem; /*30*/
+  --font-size-3xl: 2.25rem;  /*36*/
+  --font-size-4xl: 3rem;     /*48*/
+  --leading-tight: 1.15;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
 }
 
 /* Light theme using data-theme="light" */
@@ -118,6 +132,22 @@
 
   /* Gradient text utility */
   .text-gradient { background-image: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* Typography utilities */
+  .text-display { font-size: var(--font-size-4xl); line-height: var(--leading-tight); font-weight: 700; letter-spacing: -0.02em; }
+  .text-headline { font-size: var(--font-size-3xl); line-height: var(--leading-tight); font-weight: 700; }
+  .text-title { font-size: var(--font-size-2xl); line-height: var(--leading-snug); font-weight: 600; }
+  .text-subtitle { font-size: var(--font-size-xl); line-height: var(--leading-snug); font-weight: 600; }
+  .text-body-lg { font-size: var(--font-size-md); line-height: var(--leading-normal); }
+  .text-body { font-size: var(--font-size-base); line-height: var(--leading-normal); }
+  .text-caption { font-size: var(--font-size-xs); line-height: var(--leading-snug); letter-spacing: .02em; }
+
+  /* Badge */
+  .badge { display:inline-flex; align-items:center; gap:4px; font-size: var(--font-size-xs); font-weight:600; padding:4px 10px; border-radius: var(--radius-full); line-height:1; border:1px solid transparent; background: var(--color-surface-2); color: var(--color-text-muted); }
+  .badge-primary { background: var(--gradient-primary); color:#fff; }
+  .badge-outline { background: transparent; border-color: var(--color-border); color: var(--color-text-muted); }
+  .badge-success { background: rgba(34,197,94,.12); color: var(--color-success); }
+  .badge-warning { background: rgba(245,158,11,.15); color: var(--color-warning); }
 }
 
 /* The rest of globals.css */

@@ -2,43 +2,42 @@
 
 import { useState } from 'react';
 import { useUserStore } from '@/store/userStore';
-import PayTRPayment from '@/components/payment/PayTRPayment';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
-// PayTR plans (Türk Lirası cinsinden)
-const PAYTR_PLANS = {
+// Simplified generic plans (can map to PayPal plan IDs elsewhere)
+const PLANS = {
   free: {
-    name: 'Ücretsiz',
+    name: 'Free',
     price: 0,
-    currency: 'TL',
+    currency: 'USD',
     features: [
-      'Ayda 50 hashtag üretimi',
-      'Temel platform desteği',
-      'Topluluk desteği'
+      '50 hashtag generations / month',
+      'Core platforms',
+      'Community support'
     ]
   },
   pro: {
     name: 'Pro',
-    price: 299,
-    currency: 'TL',
+    price: 9.99,
+    currency: 'USD',
     features: [
-      'Ayda 1000 hashtag üretimi',
-      'Tüm platformlar',
-      'Gelişmiş analitik',
-      'Öncelikli destek'
+      '1000 hashtag generations / month',
+      'All platforms',
+      'Advanced analytics',
+      'Priority support'
     ]
   },
   premium: {
     name: 'Premium',
-    price: 599,
-    currency: 'TL',
+    price: 19.99,
+    currency: 'USD',
     features: [
-      'Sınırsız hashtag üretimi',
-      'Tüm platformlar + erken erişim',
-      'API erişimi',
-      'Özel destek',
-      'Toplu hashtag indirme'
+      'Unlimited hashtag generations',
+      'All platforms + early access',
+      'API access',
+      'Dedicated support',
+      'Bulk hashtag export'
     ]
   }
 } as const;
@@ -65,7 +64,7 @@ export default function PricingPage() {
   };
 
   if (selectedPlan && selectedPlan !== 'free') {
-    const plan = PAYTR_PLANS[selectedPlan as keyof typeof PAYTR_PLANS];
+    const plan = PLANS[selectedPlan as keyof typeof PLANS];
     return (
       <div className="min-h-screen bg-app py-12">
         <div className="container-app">
@@ -75,20 +74,16 @@ export default function PricingPage() {
               onClick={() => setSelectedPlan(null)}
               className="mb-4"
             >
-              ← Planlara Geri Dön
+              ← Back to Plans
             </Button>
             <h1 className="text-3xl font-bold">
-              <span className="text-gradient">Ödeme</span>
+              <span className="text-gradient">Checkout</span>
             </h1>
           </div>
           
           <Card className="p-6">
-            <PayTRPayment
-              planType={selectedPlan as 'pro' | 'premium'}
-              amount={plan.price}
-              planName={plan.name}
-              features={plan.features}
-            />
+            {/* PayPal integration component will render on plan-specific pages */}
+            <p className="text-muted text-center">Checkout coming soon. PayPal subscription flow will appear here.</p>
           </Card>
         </div>
       </div>
@@ -100,17 +95,17 @@ export default function PricingPage() {
       <div className="container-app">
         <div className="text-center text-app">
           <h1 className="text-4xl font-bold sm:text-5xl">
-            <span className="text-gradient">Fiyatlandırma</span>
+            <span className="text-gradient">Pricing</span>
           </h1>
           <p className="mt-4 text-xl text-muted">
-            İhtiyacınıza uygun planı seçin
+            Choose the plan that fits your needs
           </p>
         </div>
 
         <div className="mt-16">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {Object.entries(PAYTR_PLANS).map(([key, plan]) => {
-              const isCurrentPlan = false; // TODO: user's subscription
+            {Object.entries(PLANS).map(([key, plan]) => {
+              const isCurrentPlan = false; // TODO: map to user's subscription
               const isPopular = key === 'pro';
 
               return (
@@ -120,7 +115,7 @@ export default function PricingPage() {
                 >
                   {isPopular && (
                     <div className="gradient-primary text-white text-center py-2 text-sm font-medium rounded-t-[var(--radius-lg)]">
-                      En Popüler
+                      Most Popular
                     </div>
                   )}
                   
@@ -130,10 +125,10 @@ export default function PricingPage() {
                     </h3>
                     <div className="mt-4 text-center">
                       <span className="text-4xl font-bold">
-                        ₺{plan.price}
+                        {plan.currency === 'USD' ? '$' : plan.currency}{plan.price}
                       </span>
                       {plan.price > 0 && (
-                        <span className="text-muted">/ay</span>
+                        <span className="text-muted">/mo</span>
                       )}
                     </div>
 
@@ -165,12 +160,12 @@ export default function PricingPage() {
                         variant={isPopular ? 'primary' : 'outline'}
                       >
                         {loading === key 
-                          ? 'İşleniyor...'
+                          ? 'Processing...'
                           : isCurrentPlan 
-                          ? 'Mevcut Plan' 
+                          ? 'Current Plan' 
                           : key === 'free'
-                          ? 'Ücretsiz Başla'
-                          : `${plan.name} Planını Seç`}
+                          ? 'Get Started'
+                          : `Choose ${plan.name}`}
                       </Button>
                     </div>
                   </div>
@@ -182,37 +177,34 @@ export default function PricingPage() {
 
         <div className="mt-16 text-center">
           <h2 className="text-2xl font-bold text-app mb-8">
-            Sık Sorulan Sorular
+            FAQ
           </h2>
           
           <div className="max-w-3xl mx-auto space-y-6">
             <Card className="p-6">
               <h3 className="font-semibold text-app mb-2">
-                Ödeme güvenli mi?
+                Are payments secure?
               </h3>
               <p className="text-muted">
-                Evet, tüm ödemeler PayTR aracılığıyla güvenli bir şekilde işlenir. 
-                Kredi kartı bilgileriniz şifrelenir ve güvenli sunucularda saklanır.
+                Yes, all payments are processed securely via our payment provider (PayPal). Your card and billing data are encrypted.
               </p>
             </Card>
             
             <Card className="p-6">
               <h3 className="font-semibold text-app mb-2">
-                Planımı istediğim zaman değiştirebilir miyim?
+                Can I upgrade or downgrade anytime?
               </h3>
               <p className="text-muted">
-                Evet, planınızı istediğiniz zaman yükseltebilir veya düşürebilirsiniz. 
-                Değişiklikler bir sonraki fatura döneminde geçerli olur.
+                Yes, you can change plans at any time. Adjustments apply to the next billing cycle unless otherwise stated.
               </p>
             </Card>
             
             <Card className="p-6">
               <h3 className="font-semibold text-app mb-2">
-                Para iadesi var mı?
+                Do you offer refunds?
               </h3>
               <p className="text-muted">
-                7 günlük ücretsiz deneme süresi sonunda memnun kalmazsanız, 
-                tam para iadesi alabilirsiniz.
+                If you are not satisfied within the first 7 days after upgrading, contact support for a full refund.
               </p>
             </Card>
           </div>

@@ -1,38 +1,13 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
 
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [paymentData, setPaymentData] = useState<any>(null);
-
-  useEffect(() => {
-    const status = searchParams.get('status');
-    const merchant_oid = searchParams.get('merchant_oid');
-    
-    // Ödeme durumunu kontrol et
-    fetch(`/api/paytr/success?status=${status}&merchant_oid=${merchant_oid}`)
-      .then(res => res.json())
-      .then(data => {
-        setPaymentData(data);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Payment verification error:', error);
-        setIsLoading(false);
-      });
-  }, [searchParams]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500"></div>
-      </div>
-    );
-  }
+  const merchant_oid = searchParams.get('merchant_oid');
+  const status = searchParams.get('status') || 'success';
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -47,17 +22,17 @@ function PaymentSuccessContent() {
             Ödeme Başarılı!
           </h1>
           <p className="text-gray-600">
-            Planınız başarıyla aktif hale getirildi.
+            Aboneliğiniz başarıyla aktif edildi.
           </p>
         </div>
 
-        {paymentData && (
+        {merchant_oid && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-green-800">
-              <strong>İşlem ID:</strong> {paymentData.merchant_oid}
+              <strong>İşlem ID:</strong> {merchant_oid}
             </p>
             <p className="text-sm text-green-800 mt-1">
-              {paymentData.message}
+              Durum: {status}
             </p>
           </div>
         )}
