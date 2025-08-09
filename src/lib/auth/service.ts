@@ -446,4 +446,10 @@ export class AuthService {
       return { success: false, error: 'Reset failed' };
     }
   }
+
+  static userHasPlan(user: any, requiredPlan: string): boolean {
+    const order = ['free','pro','enterprise'];
+    const userPlan = user.subscription?.planId || 'free';
+    return order.indexOf(userPlan) >= order.indexOf(requiredPlan);
+  }
 }
