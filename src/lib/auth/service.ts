@@ -326,11 +326,17 @@ export class AuthService {
         return { success: false, error: 'Invalid planId' };
       }
 
-      const user = await prisma.user.findUnique({ where: { id: userId } });
+      const user = await prisma.user.findUnique({ where: { id: userId }, include: { subscription: true } });
       if (!user) return { success: false, error: 'User not found' };
 
+      // Early return if already on desired plan
+      if (user.subscription?.planId === planId) {
+        return { success: true, user, message: 'Already on requested plan' };
+      }
+
+      const previousPlan = user.subscription?.planId || 'none';
+
       const periodStart = new Date();
-      // Simple monthly period end (30 days); adjust if you have real billing cycles
       const periodEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
       const subscription = await prisma.subscription.upsert({
@@ -339,18 +345,18 @@ export class AuthService {
           planId,
           status: 'active',
           currentPeriodStart: periodStart,
-            currentPeriodEnd: periodEnd,
+          currentPeriodEnd: periodEnd,
         },
         create: {
           userId,
-          planId,
-          status: 'active',
-          currentPeriodStart: periodStart,
-          currentPeriodEnd: periodEnd,
+            planId,
+            status: 'active',
+            currentPeriodStart: periodStart,
+            currentPeriodEnd: periodEnd,
         }
       });
 
-      return { success: true, user: { ...user, subscription }, message: 'Subscription updated' };
+      return { success: true, user: { ...user, subscription }, message: `Subscription updated from ${previousPlan} to ${planId}` };
     } catch (error) {
       console.error('updateSubscription error:', error);
       return { success: false, error: 'Subscription update failed' };
