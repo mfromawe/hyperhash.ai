@@ -46,26 +46,7 @@ const App: React.FC = () => {
       </style>
       <Header />
       <main className="container mx-auto max-w-4xl w-full flex-grow flex flex-col items-center py-8">
-        {/* SEO content blocks under header */}
-        <section className="w-full mb-6 space-y-6 animate-fade-in">
-          <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-100">Instagram, TikTok, YouTube ve X için Hashtag Üret</h2>
-            <p className="text-slate-400 mt-2">HyperHash; içeriğinize, dile ve stile göre trend potansiyeli yüksek hashtagler üretir. Paylaşımlarınızın keşfedilmesini ve etkileşimini artırmayı hedefler.</p>
-          </div>
-          <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-100">Nasıl Çalışır?</h2>
-            <p className="text-slate-400 mt-2">Metninizi girin, platform ve dili seçin, stili belirleyin. HyperHash, Gemini modelini kullanarak tam 15 öneri üretir ve her biri için kısa bir açıklama ile trend skoru verir.</p>
-          </div>
-          <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-100">Öne Çıkan Özellikler</h2>
-            <ul className="list-disc list-inside text-slate-400 mt-2">
-              <li>Çok dilli öneriler ve platforma özel optimizasyon</li>
-              <li>Trend skoru ile hızlı karşılaştırma</li>
-              <li>Tek tıkla kopyalama ve CSV olarak dışa aktarma</li>
-            </ul>
-          </div>
-        </section>
-        <div className="w-full bg-slate-800/50 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl shadow-indigo-900/20 space-y-8">
+  <div className="w-full bg-slate-800/50 backdrop-blur-sm p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl shadow-indigo-900/20 space-y-8">
             <InputForm onSubmit={handleGenerate} isLoading={isLoading} />
           
             {isLoading && <Loader />}
@@ -79,6 +60,40 @@ const App: React.FC = () => {
 
             {!isLoading && hashtags.length > 0 && <ResultsDisplay hashtags={hashtags} />}
         </div>
+
+        {/* SEO-friendly content as a separate tab below (English) */}
+  <section id="seo" className="w-full mt-8 animate-fade-in">
+          <div className="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden">
+            <div className="flex border-b border-slate-700">
+              <button
+                type="button"
+                className="px-4 py-3 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 focus:outline-none"
+                aria-selected="true"
+                role="tab"
+              >
+                SEO
+              </button>
+            </div>
+            <div role="tabpanel" className="p-6 md:p-8 space-y-6">
+              <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-700">
+                <h2 className="text-xl md:text-2xl font-bold text-slate-100">Hashtags for Instagram, TikTok, YouTube, and X</h2>
+                <p className="text-slate-400 mt-2">HyperHash generates high-potential, trend-aware hashtags based on your content, language, and preferred style—helping your posts reach the right audience.</p>
+              </div>
+              <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-700">
+                <h2 className="text-xl md:text-2xl font-bold text-slate-100">How it works</h2>
+                <p className="text-slate-400 mt-2">Enter your text, choose a platform and language, then select a style. HyperHash uses the Gemini model to produce exactly 15 suggestions, each with a brief reason and a trend score.</p>
+              </div>
+              <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-700">
+                <h2 className="text-xl md:text-2xl font-bold text-slate-100">Highlights</h2>
+                <ul className="list-disc list-inside text-slate-400 mt-2 space-y-1">
+                  <li>Multilingual suggestions tailored to each platform</li>
+                  <li>Comparable trend scores for quick decisions</li>
+                  <li>One-click copy and CSV export</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

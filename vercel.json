@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "installCommand": "cd apps/hyperhash && npm ci",
+  "installCommand": "npm ci && cd apps/hyperhash && npm ci",
   "buildCommand": "cd apps/hyperhash && npm run build",
   "outputDirectory": "apps/hyperhash/dist"
 }

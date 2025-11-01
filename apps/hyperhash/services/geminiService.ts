@@ -1,80 +1,46 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
 import { GenerationParams, Hashtag } from '../types';
 
-const API_KEY = process.env.API_KEY;
+let lastController: AbortController | null = null;
 
-const getAi = () => {
-    if (!API_KEY) {
-        throw new Error("API key is missing. Please set GEMINI_API_KEY in your environment.");
+async function fetchWithRetry(url: string, init: RequestInit, retries = 2): Promise<Response> {
+    try {
+        const res = await fetch(url, init);
+        if (!res.ok) {
+            if ((res.status >= 500 || res.status === 429) && retries > 0) {
+                const retryAfter = Number(res.headers.get('Retry-After') || '0');
+                const delay = retryAfter > 0 ? retryAfter * 1000 : (300 * (3 - retries));
+                await new Promise(r => setTimeout(r, delay));
+                return fetchWithRetry(url, init, retries - 1);
+            }
+            throw new Error(`Request failed: ${res.status}`);
+        }
+        return res;
+    } catch (e) {
+        if (retries > 0) {
+            await new Promise(r => setTimeout(r, 300 * (3 - retries)));
+            return fetchWithRetry(url, init, retries - 1);
+        }
+        throw e;
     }
-    return new GoogleGenAI({ apiKey: API_KEY });
-};
-
-const responseSchema = {
-    type: Type.ARRAY,
-    items: {
-        type: Type.OBJECT,
-        properties: {
-            hashtag: {
-                type: Type.STRING,
-                description: 'The generated hashtag, including the # symbol.',
-            },
-            trend_score: {
-                type: Type.NUMBER,
-                description: 'A score from 0 to 100 indicating trend potential.',
-            },
-            reason: {
-                type: Type.STRING,
-                description: 'A brief justification for the hashtag and its score.',
-            },
-        },
-        required: ['hashtag', 'trend_score', 'reason'],
-    },
-};
+}
 
 export const generateHashtags = async (params: GenerationParams): Promise<Hashtag[]> => {
-    const { content, platform, style, language } = params;
+    if (lastController) lastController.abort();
+    const controller = new AbortController();
+    lastController = controller;
 
-    const prompt = `
-        You are a highly advanced AI assistant, "HyperHash," specializing in social media marketing and trend analysis. 
-        Your task is to generate viral, trend-driven, multilingual hashtags. You have access to real-time Google Trends data to inform your decisions.
+    const res = await fetchWithRetry('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+        signal: controller.signal,
+    });
 
-        Analyze the following user-provided content and the generation parameters. Based on this, generate exactly 15 optimized hashtags.
-
-        **User Content:** "${content}"
-        **Target Platform:** "${platform}"
-        **Desired Style:** "${style}" (Options: Organic, Trending, Branded, Hybrid). The Hybrid style should be a smart mix of all other styles.
-        **Language:** "${language}"
-
-        For each hashtag, provide:
-        1.  \`hashtag\`: The hashtag itself, starting with #.
-        2.  \`trend_score\`: An integer score from 0 to 100, representing its current viral potential based on Google Trends and social media momentum. A higher score means it's more likely to be trending.
-        3.  \`reason\`: A very brief, one-sentence explanation for why this hashtag is a good choice and what its score reflects.
-
-        Your output MUST be a valid JSON array matching the provided schema. Do not include any markdown formatting like \`\`\`json.
-    `;
-
-    try {
-        const ai = getAi();
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-pro",
-            contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: responseSchema,
-                temperature: 0.7,
-            },
-        });
-
-        const jsonText = response.text.trim();
-        const result = JSON.parse(jsonText) as Hashtag[];
-        
-        // Sort by trend_score descending
-        return result.sort((a, b) => b.trend_score - a.trend_score);
-
-    } catch (error) {
-        console.error("Error generating hashtags:", error);
-        throw new Error("Failed to generate hashtags. The model may have returned an invalid response.");
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+        const msg = data?.error || 'Unexpected server response';
+        throw new Error(msg);
     }
+    return data as Hashtag[];
 };
