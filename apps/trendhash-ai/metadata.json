@@ -1,0 +1,5 @@
+{
+  "name": "TrendHash AI",
+  "description": "An advanced, trend-driven AI hashtag generator powered by Gemini. It analyzes content ideas and Google Trends data to create viral, multilingual hashtags for various social media platforms.",
+  "requestFramePermissions": []
+}
