@@ -1,11 +1,5 @@
 {
-  
-  "outputDirectory": ".next",
-  "installCommand": "npm ci",
-  "devCommand": "next dev --turbopack",
-  "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
-    }
-  }
+  "installCommand": "cd apps/trendhash-ai && npm ci",
+  "buildCommand": "cd apps/trendhash-ai && npm run build",
+  "outputDirectory": "apps/trendhash-ai/dist"
 }
