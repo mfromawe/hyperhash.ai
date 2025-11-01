@@ -1,0 +1,13 @@
+# Exclude Next.js middleware/config so Vercel doesn't try to bundle them
+middleware.ts
+next.config.ts
+
+# Optional: common folders not needed for static Vite deploy
+src/
+app/
+pages/
+__tests__/
+scripts/
+prisma/
+
+# Keep Vite output under apps/trendhash-ai/dist (do NOT ignore it)
