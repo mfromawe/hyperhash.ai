@@ -25,6 +25,23 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ hashtags }) => {
     setCopiedAll(true);
   };
 
+  const handleExportCsv = () => {
+    const header = 'hashtag,trend_score,reason\n';
+    const rows = hashtags.map(h => {
+      // escape quotes and commas in reason/hashtag
+      const esc = (s: string) => '"' + s.replace(/"/g, '""') + '"';
+      return [esc(h.hashtag), h.trend_score.toString(), esc(h.reason)].join(',');
+    }).join('\n');
+    const csv = header + rows;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'hashtags.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (hashtags.length === 0) {
     return null;
   }
@@ -33,20 +50,28 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ hashtags }) => {
     <div className="w-full space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-slate-200">Generated Hashtags</h2>
-        <button
-          onClick={handleCopyAll}
-          className="flex items-center gap-2 py-2 px-4 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 transition-colors duration-200"
-        >
-          {copiedAll ? (
-            <>
-              <CheckIcon className="w-5 h-5" /> Copied!
-            </>
-          ) : (
-            <>
-              <CopyIcon className="w-5 h-5" /> Copy All
-            </>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCsv}
+            className="py-2 px-4 bg-slate-700 text-slate-200 rounded-md font-semibold hover:bg-slate-600 transition-colors duration-200"
+          >
+            Export CSV
+          </button>
+          <button
+            onClick={handleCopyAll}
+            className="flex items-center gap-2 py-2 px-4 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 transition-colors duration-200"
+          >
+            {copiedAll ? (
+              <>
+                <CheckIcon className="w-5 h-5" /> Copied!
+              </>
+            ) : (
+              <>
+                <CopyIcon className="w-5 h-5" /> Copy All
+              </>
+            )}
+          </button>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {hashtags.map((tag, index) => (

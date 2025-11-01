@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GenerationParams, Platform, Language, Style } from '../types';
 import { PLATFORMS, LANGUAGES, STYLES } from '../constants';
 
@@ -14,10 +14,28 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading }) => {
   const [language, setLanguage] = useState<Language>('English');
   const [style, setStyle] = useState<Style>('Hybrid');
 
+  // Restore last session
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('trendhash:lastParams');
+      if (saved) {
+        const parsed = JSON.parse(saved) as { content: string; platform: Platform; language: Language; style: Style };
+        if (parsed.content) setContent(parsed.content);
+        if (parsed.platform) setPlatform(parsed.platform);
+        if (parsed.language) setLanguage(parsed.language);
+        if (parsed.style) setStyle(parsed.style);
+      }
+    } catch {}
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (content.trim() && !isLoading) {
-      onSubmit({ content, platform, language, style });
+      const params = { content, platform, language, style };
+      try {
+        localStorage.setItem('trendhash:lastParams', JSON.stringify(params));
+      } catch {}
+      onSubmit(params);
     }
   };
 
