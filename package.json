@@ -9,7 +9,7 @@
     "lint": "next lint",
     "analyze": "ANALYZE=true npm run build",
     "postinstall": "prisma generate",
-    "vercel-build": "node scripts/vercel-build.js",
+    "vercel-build": "echo 'Skipping root Next.js vercel-build; Vite app deploy handled via vercel.json'",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:setup": "node scripts/db-setup.js",
