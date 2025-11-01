@@ -14,10 +14,19 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading }) => {
   const [language, setLanguage] = useState<Language>('English');
   const [style, setStyle] = useState<Style>('Hybrid');
 
-  // Restore last session
+  // Restore last session (migrate from old key if present)
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('trendhash:lastParams');
+      let saved = localStorage.getItem('hyperhash:lastParams');
+      if (!saved) {
+        // migrate legacy key
+        const legacy = localStorage.getItem('trendhash:lastParams');
+        if (legacy) {
+          saved = legacy;
+          localStorage.setItem('hyperhash:lastParams', legacy);
+          localStorage.removeItem('trendhash:lastParams');
+        }
+      }
       if (saved) {
         const parsed = JSON.parse(saved) as { content: string; platform: Platform; language: Language; style: Style };
         if (parsed.content) setContent(parsed.content);
@@ -33,7 +42,7 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading }) => {
     if (content.trim() && !isLoading) {
       const params = { content, platform, language, style };
       try {
-        localStorage.setItem('trendhash:lastParams', JSON.stringify(params));
+        localStorage.setItem('hyperhash:lastParams', JSON.stringify(params));
       } catch {}
       onSubmit(params);
     }

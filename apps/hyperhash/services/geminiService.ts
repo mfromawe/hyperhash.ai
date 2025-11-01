@@ -37,7 +37,7 @@ export const generateHashtags = async (params: GenerationParams): Promise<Hashta
     const { content, platform, style, language } = params;
 
     const prompt = `
-        You are a highly advanced AI assistant, "TrendHash," specializing in social media marketing and trend analysis. 
+        You are a highly advanced AI assistant, "HyperHash," specializing in social media marketing and trend analysis. 
         Your task is to generate viral, trend-driven, multilingual hashtags. You have access to real-time Google Trends data to inform your decisions.
 
         Analyze the following user-provided content and the generation parameters. Based on this, generate exactly 15 optimized hashtags.

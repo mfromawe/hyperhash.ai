@@ -1,6 +1,6 @@
 {
   "framework": "vite",
-  "installCommand": "cd apps/trendhash-ai && npm ci",
-  "buildCommand": "cd apps/trendhash-ai && npm run build",
-  "outputDirectory": "apps/trendhash-ai/dist"
+  "installCommand": "cd apps/hyperhash && npm ci",
+  "buildCommand": "cd apps/hyperhash && npm run build",
+  "outputDirectory": "apps/hyperhash/dist"
 }

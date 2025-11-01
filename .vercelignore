@@ -10,4 +10,4 @@ __tests__/
 scripts/
 prisma/
 
-# Keep Vite output under apps/trendhash-ai/dist (do NOT ignore it)
+# Keep Vite output under apps/hyperhash/dist (do NOT ignore it)
