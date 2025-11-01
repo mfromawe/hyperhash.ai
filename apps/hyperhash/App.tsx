@@ -46,6 +46,25 @@ const App: React.FC = () => {
       </style>
       <Header />
       <main className="container mx-auto max-w-4xl w-full flex-grow flex flex-col items-center py-8">
+        {/* SEO content blocks under header */}
+        <section className="w-full mb-6 space-y-6 animate-fade-in">
+          <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-100">Instagram, TikTok, YouTube ve X için Hashtag Üret</h2>
+            <p className="text-slate-400 mt-2">HyperHash; içeriğinize, dile ve stile göre trend potansiyeli yüksek hashtagler üretir. Paylaşımlarınızın keşfedilmesini ve etkileşimini artırmayı hedefler.</p>
+          </div>
+          <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-100">Nasıl Çalışır?</h2>
+            <p className="text-slate-400 mt-2">Metninizi girin, platform ve dili seçin, stili belirleyin. HyperHash, Gemini modelini kullanarak tam 15 öneri üretir ve her biri için kısa bir açıklama ile trend skoru verir.</p>
+          </div>
+          <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-100">Öne Çıkan Özellikler</h2>
+            <ul className="list-disc list-inside text-slate-400 mt-2">
+              <li>Çok dilli öneriler ve platforma özel optimizasyon</li>
+              <li>Trend skoru ile hızlı karşılaştırma</li>
+              <li>Tek tıkla kopyalama ve CSV olarak dışa aktarma</li>
+            </ul>
+          </div>
+        </section>
         <div className="w-full bg-slate-800/50 p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl shadow-indigo-900/20 space-y-8">
             <InputForm onSubmit={handleGenerate} isLoading={isLoading} />
           
