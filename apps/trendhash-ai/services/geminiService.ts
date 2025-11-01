@@ -4,11 +4,12 @@ import { GenerationParams, Hashtag } from '../types';
 
 const API_KEY = process.env.API_KEY;
 
-if (!API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const getAi = () => {
+    if (!API_KEY) {
+        throw new Error("API key is missing. Please set GEMINI_API_KEY in your environment.");
+    }
+    return new GoogleGenAI({ apiKey: API_KEY });
+};
 
 const responseSchema = {
     type: Type.ARRAY,
@@ -55,6 +56,7 @@ export const generateHashtags = async (params: GenerationParams): Promise<Hashta
     `;
 
     try {
+        const ai = getAi();
         const response = await ai.models.generateContent({
             model: "gemini-2.5-pro",
             contents: prompt,
