@@ -1,46 +1,62 @@
 
+import { GoogleGenAI, Type } from "@google/genai";
 import { GenerationParams, Hashtag } from '../types';
 
-let lastController: AbortController | null = null;
+const API_KEY = process.env.API_KEY;
 
-async function fetchWithRetry(url: string, init: RequestInit, retries = 2): Promise<Response> {
-    try {
-        const res = await fetch(url, init);
-        if (!res.ok) {
-            if ((res.status >= 500 || res.status === 429) && retries > 0) {
-                const retryAfter = Number(res.headers.get('Retry-After') || '0');
-                const delay = retryAfter > 0 ? retryAfter * 1000 : (300 * (3 - retries));
-                await new Promise(r => setTimeout(r, delay));
-                return fetchWithRetry(url, init, retries - 1);
-            }
-            throw new Error(`Request failed: ${res.status}`);
-        }
-        return res;
-    } catch (e) {
-        if (retries > 0) {
-            await new Promise(r => setTimeout(r, 300 * (3 - retries)));
-            return fetchWithRetry(url, init, retries - 1);
-        }
-        throw e;
-    }
+if (!API_KEY) {
+    throw new Error("API_KEY environment variable not set");
 }
 
+const ai = new GoogleGenAI({ apiKey: API_KEY });
+
+const responseSchema = {
+    type: Type.ARRAY,
+    items: {
+        type: Type.OBJECT,
+        properties: {
+            hashtag: {
+                type: Type.STRING,
+                description: 'The generated hashtag, including the # symbol.',
+            },
+            trend_score: {
+                type: Type.NUMBER,
+                description: 'A score from 0 to 100 indicating trend potential.',
+            },
+            reason: {
+                type: Type.STRING,
+                description: 'A brief justification for the hashtag and its score.',
+            },
+        },
+        required: ['hashtag', 'trend_score', 'reason'],
+    },
+};
+
 export const generateHashtags = async (params: GenerationParams): Promise<Hashtag[]> => {
-    if (lastController) lastController.abort();
-    const controller = new AbortController();
-    lastController = controller;
+    const { content, platform, style, language } = params;
 
-    const res = await fetchWithRetry('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
-        signal: controller.signal,
-    });
+    const prompt = `Generate 15 viral ${language} hashtags for ${platform} (${style} style) about: "${content}". Return JSON array with: hashtag (string with #), trend_score (0-100 int), reason (brief sentence). No markdown.`;
 
-    const data = await res.json();
-    if (!Array.isArray(data)) {
-        const msg = data?.error || 'Unexpected server response';
-        throw new Error(msg);
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: responseSchema,
+                temperature: 0.5,
+                maxOutputTokens: 1500,
+            },
+        });
+
+        const jsonText = response.text.trim();
+        const result = JSON.parse(jsonText) as Hashtag[];
+        
+        // Sort by trend_score descending
+        return result.sort((a, b) => b.trend_score - a.trend_score);
+
+    } catch (error) {
+        console.error("Error generating hashtags:", error);
+        throw new Error("Failed to generate hashtags. The model may have returned an invalid response.");
     }
-    return data as Hashtag[];
 };

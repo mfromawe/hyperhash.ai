@@ -32,68 +32,48 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 flex flex-col font-sans p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-slate-200 flex flex-col font-sans p-4">
       <style>
       {`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes slide-up {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+        }
         .animate-fade-in {
           animation: fade-in 0.5s ease-out forwards;
+        }
+        .animate-slide-up {
+          animation: slide-up 0.6s ease-out forwards;
+        }
+        .animate-pulse-glow {
+          animation: pulse-glow 2s ease-in-out infinite;
         }
       `}
       </style>
       <Header />
-      <main className="container mx-auto max-w-4xl w-full flex-grow flex flex-col items-center py-8">
-  <div className="w-full bg-slate-800/50 backdrop-blur-sm p-6 md:p-8 rounded-2xl border border-slate-700 shadow-2xl shadow-indigo-900/20 space-y-8">
+      <main className="container mx-auto max-w-5xl w-full flex-grow flex flex-col items-center py-8">
+        <div className="w-full bg-slate-800/60 backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-slate-700/50 shadow-2xl shadow-purple-900/30 space-y-8 animate-slide-up">
             <InputForm onSubmit={handleGenerate} isLoading={isLoading} />
           
             {isLoading && <Loader />}
 
             {error && (
-                <div className="text-center p-4 bg-rose-900/50 border border-rose-700 text-rose-300 rounded-lg animate-fade-in">
-                <p className="font-bold">Oops! Something went wrong.</p>
-                <p className="text-sm">{error}</p>
+                <div className="text-center p-5 bg-rose-900/60 backdrop-blur border border-rose-700/50 text-rose-200 rounded-xl animate-fade-in shadow-lg">
+                <p className="font-bold text-lg">⚠️ Oops! Something went wrong.</p>
+                <p className="text-sm mt-1">{error}</p>
                 </div>
             )}
 
             {!isLoading && hashtags.length > 0 && <ResultsDisplay hashtags={hashtags} />}
         </div>
-
-        {/* SEO-friendly content as a separate tab below (English) */}
-  <section id="seo" className="w-full mt-8 animate-fade-in">
-          <div className="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden">
-            <div className="flex border-b border-slate-700">
-              <button
-                type="button"
-                className="px-4 py-3 text-sm font-medium text-slate-200 bg-slate-800/70 hover:bg-slate-800 focus:outline-none"
-                aria-selected="true"
-                role="tab"
-              >
-                SEO
-              </button>
-            </div>
-            <div role="tabpanel" className="p-6 md:p-8 space-y-6">
-              <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-700">
-                <h2 className="text-xl md:text-2xl font-bold text-slate-100">Hashtags for Instagram, TikTok, YouTube, and X</h2>
-                <p className="text-slate-400 mt-2">HyperHash generates high-potential, trend-aware hashtags based on your content, language, and preferred style—helping your posts reach the right audience.</p>
-              </div>
-              <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-700">
-                <h2 className="text-xl md:text-2xl font-bold text-slate-100">How it works</h2>
-                <p className="text-slate-400 mt-2">Enter your text, choose a platform and language, then select a style. HyperHash uses the Gemini model to produce exactly 15 suggestions, each with a brief reason and a trend score.</p>
-              </div>
-              <div className="bg-slate-900/40 p-6 rounded-xl border border-slate-700">
-                <h2 className="text-xl md:text-2xl font-bold text-slate-100">Highlights</h2>
-                <ul className="list-disc list-inside text-slate-400 mt-2 space-y-1">
-                  <li>Multilingual suggestions tailored to each platform</li>
-                  <li>Comparable trend scores for quick decisions</li>
-                  <li>One-click copy and CSV export</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       <Footer />
     </div>
