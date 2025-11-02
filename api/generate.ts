@@ -63,8 +63,17 @@ export default async function handler(req: any, res: any) {
       model = genAI.getGenerativeModel({ model: preferredModelName });
     }
 
-    // Optimized shorter prompt for faster response
-    const prompt = `Generate 15 viral ${language} hashtags for ${platform} (${style} style) about: "${content}". Return JSON array with: hashtag (string with #), trend_score (0-100), reason (brief). No markdown.`;
+    // Optimized shorter prompt for faster response with explicit JSON structure
+    const prompt = `Generate 15 viral ${language} hashtags for ${platform} (${style} style) about: "${content}".
+
+Return ONLY a JSON array (no markdown, no code blocks) with this exact structure:
+[
+  {
+    "hashtag": "#example",
+    "trend_score": 85,
+    "reason": "brief explanation"
+  }
+]`;
 
     // Try generating content; if the model is not available for this API version,
     // the SDK will throw. If we receive a 404 model-not-found error, try a safe fallback model.
@@ -72,7 +81,7 @@ export default async function handler(req: any, res: any) {
     try {
       geminiRes = await model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }]}],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.5, maxOutputTokens: 1500 },
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.7, maxOutputTokens: 2000 },
       });
     } catch (e: any) {
       console.warn('Model generateContent failed; attempting fallback model if applicable', e?.message || e);
@@ -83,7 +92,7 @@ export default async function handler(req: any, res: any) {
           const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-pro' });
           geminiRes = await fallbackModel.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }]}],
-            generationConfig: { responseMimeType: 'application/json', temperature: 0.5, maxOutputTokens: 1500 },
+            generationConfig: { responseMimeType: 'application/json', temperature: 0.7, maxOutputTokens: 2000 },
           });
         } catch (fallbackErr) {
           // rethrow original error to be handled below
@@ -94,12 +103,21 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    const text = (geminiRes.response?.text?.() || '').trim();
+    let text = (geminiRes.response?.text?.() || '').trim();
+    
+    // Clean up potential markdown code blocks
+    if (text.startsWith('```json')) {
+      text = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
+    } else if (text.startsWith('```')) {
+      text = text.replace(/```\s*/g, '').trim();
+    }
+    
     let parsed: any[] = [];
     try {
       parsed = JSON.parse(text);
     } catch (_e) {
-      return res.status(502).json({ error: 'Upstream model returned invalid JSON' });
+      console.error('Failed to parse Gemini response:', text);
+      return res.status(502).json({ error: 'Upstream model returned invalid JSON', details: text.substring(0, 200) });
     }
 
     parsed.sort((a, b) => (b?.trend_score || 0) - (a?.trend_score || 0));
