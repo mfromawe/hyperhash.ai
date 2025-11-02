@@ -63,17 +63,19 @@ export default async function handler(req: any, res: any) {
       model = genAI.getGenerativeModel({ model: preferredModelName });
     }
 
-    // Optimized shorter prompt for faster response with explicit JSON structure
-    const prompt = `Generate 15 viral ${language} hashtags for ${platform} (${style} style) about: "${content}".
+    // Simplified prompt that works reliably with Gemini
+    const prompt = `You are a hashtag generator. Generate exactly 15 trending hashtags for ${platform} about: "${content}". 
+Style: ${style}. Language: ${language}.
 
-Return ONLY a JSON array (no markdown, no code blocks) with this exact structure:
-[
-  {
-    "hashtag": "#example",
-    "trend_score": 85,
-    "reason": "brief explanation"
-  }
-]`;
+For each hashtag, provide:
+- hashtag: the actual hashtag with # symbol
+- trend_score: number between 0-100 indicating popularity
+- reason: brief 1-sentence explanation
+
+Respond ONLY with a valid JSON array. Example format:
+[{"hashtag":"#Example","trend_score":85,"reason":"Popular trend"},{"hashtag":"#Test","trend_score":75,"reason":"Growing topic"}]
+
+Your JSON array:`;
 
     // Try generating content; if the model is not available for this API version,
     // the SDK will throw. If we receive a 404 model-not-found error, try a safe fallback model.
@@ -81,7 +83,7 @@ Return ONLY a JSON array (no markdown, no code blocks) with this exact structure
     try {
       geminiRes = await model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }]}],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.7, maxOutputTokens: 2000 },
+        generationConfig: { temperature: 0.8, maxOutputTokens: 2500 },
       });
     } catch (e: any) {
       console.warn('Model generateContent failed; attempting fallback model if applicable', e?.message || e);
@@ -92,7 +94,7 @@ Return ONLY a JSON array (no markdown, no code blocks) with this exact structure
           const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-pro' });
           geminiRes = await fallbackModel.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }]}],
-            generationConfig: { responseMimeType: 'application/json', temperature: 0.7, maxOutputTokens: 2000 },
+            generationConfig: { temperature: 0.8, maxOutputTokens: 2500 },
           });
         } catch (fallbackErr) {
           // rethrow original error to be handled below
@@ -105,19 +107,36 @@ Return ONLY a JSON array (no markdown, no code blocks) with this exact structure
 
     let text = (geminiRes.response?.text?.() || '').trim();
     
-    // Clean up potential markdown code blocks
-    if (text.startsWith('```json')) {
-      text = text.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim();
-    } else if (text.startsWith('```')) {
-      text = text.replace(/```\s*/g, '').trim();
+    // Aggressive cleaning of markdown and extra text
+    if (text.includes('```json')) {
+      const match = text.match(/```json\s*([\s\S]*?)\s*```/);
+      if (match) text = match[1].trim();
+    } else if (text.includes('```')) {
+      const match = text.match(/```\s*([\s\S]*?)\s*```/);
+      if (match) text = match[1].trim();
+    }
+    
+    // Remove any text before first [ and after last ]
+    const firstBracket = text.indexOf('[');
+    const lastBracket = text.lastIndexOf(']');
+    if (firstBracket !== -1 && lastBracket !== -1) {
+      text = text.substring(firstBracket, lastBracket + 1);
     }
     
     let parsed: any[] = [];
     try {
       parsed = JSON.parse(text);
-    } catch (_e) {
+      if (!Array.isArray(parsed)) {
+        throw new Error('Response is not an array');
+      }
+    } catch (parseError) {
       console.error('Failed to parse Gemini response:', text);
-      return res.status(502).json({ error: 'Upstream model returned invalid JSON', details: text.substring(0, 200) });
+      console.error('Parse error:', parseError);
+      return res.status(502).json({ 
+        error: 'Upstream model returned invalid JSON', 
+        details: text.substring(0, 300),
+        hint: 'The AI model did not return valid JSON format'
+      });
     }
 
     parsed.sort((a, b) => (b?.trend_score || 0) - (a?.trend_score || 0));
