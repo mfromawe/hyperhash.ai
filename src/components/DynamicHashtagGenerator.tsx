@@ -92,11 +92,11 @@ export default function DynamicHashtagGenerator({
   };
 
   return (
-    <div className={`max-w-4xl mx-auto ${className}`}>
+    <div className={`max-w-5xl mx-auto ${className}`}>
       {/* Platform Selector */}
       {showPlatformSelector && (
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Platform</h3>
+          <h3 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-4">Select Platform</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {Object.keys(PLATFORM_CONFIGS).map((platform) => {
               const p = platform as SocialMediaPlatform;
@@ -105,14 +105,14 @@ export default function DynamicHashtagGenerator({
                 <button
                   key={platform}
                   onClick={() => setSelectedPlatform(p)}
-                  className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                  className={`p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 active:scale-95 ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50 shadow-lg scale-105'
-                      : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                      ? 'border-purple-500 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 backdrop-blur shadow-lg shadow-purple-500/50 scale-105'
+                      : 'border-gray-700/50 bg-slate-800/30 backdrop-blur hover:border-gray-600 hover:shadow-md'
                   }`}
                 >
                   <div className="text-2xl mb-2">{getPlatformIcon(p)}</div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className={`text-sm font-medium ${isSelected ? 'text-purple-300' : 'text-gray-300'}`}>
                     {PLATFORM_CONFIGS[p].name}
                   </div>
                 </button>
@@ -156,75 +156,78 @@ export default function DynamicHashtagGenerator({
       </div>
 
       {/* Input Form */}
-      <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-200">
+      <div className="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-purple-900/30 p-8 mb-8 border-2 border-slate-700/50">
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-slate-300 mb-2">
               Content Description *
             </label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder={`What type of content are you creating for ${platformConfig.name}? E.g: Coffee morning photo, fitness motivation, travel vlog...`}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-gray-900 placeholder-gray-500 bg-white shadow-inner"
+              className="w-full px-4 py-3 bg-slate-900/50 backdrop-blur border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 resize-none text-slate-200 placeholder-slate-500 hover:border-slate-600"
               rows={4}
-              style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-slate-300 mb-2">
               Category (Optional)
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white shadow-inner"
-              style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
+              className="w-full px-4 py-3 bg-slate-900/50 backdrop-blur border-2 border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-slate-200 hover:border-slate-600 cursor-pointer"
             >
-              <option value="" className="text-gray-500" style={{ color: '#6b7280', backgroundColor: '#ffffff' }}>Select category...</option>
-              <option value="lifestyle" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Lifestyle</option>
-              <option value="business" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Business & Career</option>
-              <option value="fashion" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Fashion & Style</option>
-              <option value="food" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Food & Drink</option>
-              <option value="travel" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Travel</option>
-              <option value="fitness" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Fitness & Health</option>
-              <option value="technology" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Technology</option>
-              <option value="art" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Art & Design</option>
-              <option value="entertainment" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Entertainment</option>
-              <option value="education" className="text-gray-900" style={{ color: '#1f2937', backgroundColor: '#ffffff' }}>Education</option>
+              <option value="" className="text-slate-400">Select category...</option>
+              <option value="lifestyle" className="text-slate-200">Lifestyle</option>
+              <option value="business" className="text-slate-200">Business & Career</option>
+              <option value="fashion" className="text-slate-200">Fashion & Style</option>
+              <option value="food" className="text-slate-200">Food & Drink</option>
+              <option value="travel" className="text-slate-200">Travel</option>
+              <option value="fitness" className="text-slate-200">Fitness & Health</option>
+              <option value="technology" className="text-slate-200">Technology</option>
+              <option value="art" className="text-slate-200">Art & Design</option>
+              <option value="entertainment" className="text-slate-200">Entertainment</option>
+              <option value="education" className="text-slate-200">Education</option>
             </select>
           </div>
 
           <button
             onClick={handleGenerate}
             disabled={isLoading || !content.trim()}
-            className={`w-full py-4 px-6 rounded-lg font-semibold text-white transition-all duration-200 ${
+            className={`w-full py-4 px-6 rounded-xl font-bold text-white transition-all duration-300 relative overflow-hidden group ${
               isLoading || !content.trim()
-                ? 'bg-gray-400 cursor-not-allowed'
-                : `bg-gradient-to-r ${getPlatformColor(selectedPlatform)} hover:shadow-lg transform hover:scale-105`
+                ? 'bg-gray-600 cursor-not-allowed opacity-50'
+                : `bg-gradient-to-r ${getPlatformColor(selectedPlatform)} hover:shadow-2xl hover:shadow-purple-500/50 transform hover:scale-[1.02] active:scale-[0.98]`
             }`}
           >
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-                Generating Hashtags...
-              </div>
-            ) : (
-              `Generate ${platformConfig.name} Hashtags`
-            )}
+            <span className="relative z-10 flex items-center justify-center">
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                  Generating Magic...
+                </>
+              ) : (
+                <>
+                  ✨ Generate {platformConfig.name} Hashtags
+                </>
+              )}
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 group-hover:translate-x-full transition-transform duration-1000"/>
           </button>
         </div>
       </div>
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
+        <div className="bg-rose-900/60 backdrop-blur border-2 border-rose-700/50 rounded-xl p-5 mb-8 shadow-lg animate-fade-in">
           <div className="flex">
-            <div className="text-red-600 text-xl mr-3">⚠️</div>
+            <div className="text-rose-400 text-xl mr-3">⚠️</div>
             <div>
-              <h4 className="text-red-800 font-semibold">Error</h4>
-              <p className="text-red-700">{error}</p>
+              <h4 className="text-rose-200 font-semibold">Error</h4>
+              <p className="text-rose-300">{error}</p>
             </div>
           </div>
         </div>
@@ -234,16 +237,16 @@ export default function DynamicHashtagGenerator({
       {response && (
         <div className="space-y-8">
           {/* Generated Hashtags */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-purple-900/30 p-8 border-2 border-slate-700/50">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">
-                Generated Hashtags ({response.hashtags.length})
+              <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+                ✨ Generated Hashtags ({response.hashtags.length})
               </h3>
               <button
                 onClick={copyHashtags}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 font-semibold"
               >
-                📋 Copy
+                📋 Copy All
               </button>
             </div>
 
@@ -251,79 +254,84 @@ export default function DynamicHashtagGenerator({
               {response.hashtags.map((hashtag, index) => (
                 <div
                   key={index}
-                  className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="bg-slate-800/50 backdrop-blur border-2 border-slate-700/50 rounded-xl p-4 hover:shadow-xl hover:shadow-purple-900/30 hover:-translate-y-1 transition-all duration-300 hover:border-purple-500/50"
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <span className="font-mono text-blue-600 font-semibold">
+                    <span className="font-mono text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-bold text-lg">
                       {hashtag.tag}
                     </span>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      hashtag.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
-                      hashtag.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
+                    <span className={`text-xs px-2 py-1 rounded-lg font-semibold ${
+                      hashtag.difficulty === 'Easy' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50' :
+                      hashtag.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50' :
+                      'bg-rose-500/20 text-rose-400 border border-rose-500/50'
                     }`}>
                       {hashtag.difficulty}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    <div>Volume: {hashtag.volume.toLocaleString()}</div>
-                    <div>Engagement: {hashtag.engagement}%</div>
+                  <div className="text-sm text-slate-400 space-y-1">
+                    <div>Volume: <span className="text-slate-300 font-semibold">{hashtag.volume.toLocaleString()}</span></div>
+                    <div>Engagement: <span className="text-slate-300 font-semibold">{hashtag.engagement}%</span></div>
                     {hashtag.trending && (
-                      <div className="text-green-600 font-semibold">🔥 Trending</div>
+                      <div className="text-emerald-400 font-semibold mt-2 flex items-center">
+                        <span className="animate-pulse mr-1">🔥</span> Trending
+                      </div>
                     )}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="font-mono text-sm text-gray-700 break-all">
+            <div className="bg-slate-900/50 backdrop-blur rounded-xl p-4 border border-slate-700/50">
+              <div className="font-mono text-sm text-slate-300 break-all">
                 {response.hashtags.map(h => h.tag).join(' ')}
               </div>
             </div>
           </div>
 
           {/* Analytics */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Analytics & Recommendations</h3>
+          <div className="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-2xl shadow-purple-900/30 p-8 border-2 border-slate-700/50">
+            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-6">
+              📊 Analytics & Recommendations
+            </h3>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">
+              <div className="text-center p-4 bg-slate-900/50 backdrop-blur rounded-xl border border-slate-700/50">
+                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
                   {response.analytics.estimatedReach.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600">Estimated Reach</div>
+                <div className="text-sm text-slate-400 mt-2">Estimated Reach</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">
+              <div className="text-center p-4 bg-slate-900/50 backdrop-blur rounded-xl border border-slate-700/50">
+                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-green-400">
                   {response.analytics.engagementPotential}%
                 </div>
-                <div className="text-sm text-gray-600">Engagement Potential</div>
+                <div className="text-sm text-slate-400 mt-2">Engagement Potential</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600">
+              <div className="text-center p-4 bg-slate-900/50 backdrop-blur rounded-xl border border-slate-700/50">
+                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-400">
                   {response.analytics.competitionLevel}
                 </div>
-                <div className="text-sm text-gray-600">Competition Level</div>
+                <div className="text-sm text-slate-400 mt-2">Competition Level</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600">
+              <div className="text-center p-4 bg-slate-900/50 backdrop-blur rounded-xl border border-slate-700/50">
+                <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
                   {response.analytics.bestPostingTime[0]}
                 </div>
-                <div className="text-sm text-gray-600">Best Posting Time</div>
+                <div className="text-sm text-slate-400 mt-2">Best Posting Time</div>
               </div>
             </div>
 
             {/* Platform Tips */}
-            <div className="mb-6">
-              <h4 className="font-semibold text-gray-900 mb-3">
+            <div className="mb-6 bg-slate-900/30 backdrop-blur rounded-xl p-5 border border-slate-700/50">
+              <h4 className="font-semibold text-slate-200 mb-3 flex items-center">
+                <span className="text-xl mr-2">💡</span>
                 {platformConfig.name} Tips:
               </h4>
               <ul className="space-y-2">
                 {response.analytics.platformSpecificTips.map((tip, index) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-green-600 mr-2">✓</span>
-                    <span className="text-gray-700">{tip}</span>
+                    <span className="text-emerald-400 mr-2">✓</span>
+                    <span className="text-slate-300">{tip}</span>
                   </li>
                 ))}
               </ul>
@@ -331,23 +339,26 @@ export default function DynamicHashtagGenerator({
 
             {/* Suggestions */}
             <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Recommendations:</h4>
+              <h4 className="font-semibold text-slate-200 mb-3 flex items-center">
+                <span className="text-xl mr-2">🎯</span>
+                Recommendations:
+              </h4>
               <div className="space-y-3">
                 {response.suggestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    className={`p-3 rounded-lg border-l-4 ${
-                      suggestion.impact === 'High' ? 'bg-red-50 border-red-400' :
-                      suggestion.impact === 'Medium' ? 'bg-yellow-50 border-yellow-400' :
-                      'bg-blue-50 border-blue-400'
+                    className={`p-4 rounded-xl border-l-4 backdrop-blur ${
+                      suggestion.impact === 'High' ? 'bg-rose-900/30 border-rose-400' :
+                      suggestion.impact === 'Medium' ? 'bg-yellow-900/30 border-yellow-400' :
+                      'bg-blue-900/30 border-blue-400'
                     }`}
                   >
                     <div className="flex justify-between items-start">
-                      <span className="text-gray-700">{suggestion.suggestion}</span>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        suggestion.impact === 'High' ? 'bg-red-100 text-red-800' :
-                        suggestion.impact === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-blue-100 text-blue-800'
+                      <span className="text-slate-200">{suggestion.suggestion}</span>
+                      <span className={`text-xs px-2 py-1 rounded-lg font-semibold ml-3 whitespace-nowrap ${
+                        suggestion.impact === 'High' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/50' :
+                        suggestion.impact === 'Medium' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/50' :
+                        'bg-blue-500/20 text-blue-300 border border-blue-500/50'
                       }`}>
                         {suggestion.impact}
                       </span>
