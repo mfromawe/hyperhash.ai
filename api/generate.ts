@@ -52,8 +52,8 @@ export default async function handler(req: any, res: any) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Use a stable model name; fall back if unavailable in this API/version.
-    const preferredModelName = 'gemini-pro';
+    // Use the project's preferred model name; fall back if unavailable in this API/version.
+    const preferredModelName = 'gemini-2.5-pro';
     let model: any;
     try {
       model = genAI.getGenerativeModel({ model: preferredModelName });
@@ -83,11 +83,32 @@ export default async function handler(req: any, res: any) {
     `;
 
     // Try generating content; if the model is not available for this API version,
-    // the SDK will throw and our catch block will handle it.
-    const geminiRes = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }]}],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
-    });
+    // the SDK will throw. If we receive a 404 model-not-found error, try a safe fallback model.
+    let geminiRes: any;
+    try {
+      geminiRes = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: prompt }]}],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
+      });
+    } catch (e: any) {
+      console.warn('Model generateContent failed; attempting fallback model if applicable', e?.message || e);
+      // If it's a model-not-found (404) from the SDK, try a common fallback.
+      const msg = e?.message || '';
+      if (msg.includes('is not found') || msg.includes('Not Found')) {
+        try {
+          const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-pro' });
+          geminiRes = await fallbackModel.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }]}],
+            generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
+          });
+        } catch (fallbackErr) {
+          // rethrow original error to be handled below
+          throw e;
+        }
+      } else {
+        throw e;
+      }
+    }
 
     const text = (geminiRes.response?.text?.() || '').trim();
     let parsed: any[] = [];
