@@ -32,7 +32,13 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-slate-200 flex flex-col font-sans p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-indigo-950 text-slate-100 flex flex-col font-sans relative overflow-hidden">
+      {/* Animated background orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-float-slow"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl animate-float-slower"></div>
+      </div>
+      
       <style>
       {`
         @keyframes fade-in {
@@ -47,6 +53,14 @@ const App: React.FC = () => {
           0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
           50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
         }
+        @keyframes float-slow {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(50px, 50px) scale(1.1); }
+        }
+        @keyframes float-slower {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-50px, -50px) scale(1.1); }
+        }
         .animate-fade-in {
           animation: fade-in 0.5s ease-out forwards;
         }
@@ -56,11 +70,19 @@ const App: React.FC = () => {
         .animate-pulse-glow {
           animation: pulse-glow 2s ease-in-out infinite;
         }
+        .animate-float-slow {
+          animation: float-slow 20s ease-in-out infinite;
+        }
+        .animate-float-slower {
+          animation: float-slower 25s ease-in-out infinite;
+        }
       `}
       </style>
-      <Header />
-      <main className="container mx-auto max-w-5xl w-full flex-grow flex flex-col items-center py-8">
-        <div className="w-full bg-slate-800/60 backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-slate-700/50 shadow-2xl shadow-purple-900/30 space-y-8 animate-slide-up">
+      
+      <div className="relative z-10 flex flex-col min-h-screen p-4">
+        <Header />
+        <main className="container mx-auto max-w-5xl w-full flex-grow flex flex-col items-center py-8">
+          <div className="w-full bg-slate-900/70 backdrop-blur-2xl p-8 md:p-12 rounded-3xl border border-slate-700/60 shadow-2xl shadow-purple-900/40 space-y-8 animate-slide-up">
             <InputForm onSubmit={handleGenerate} isLoading={isLoading} />
           
             {isLoading && <Loader />}
@@ -73,9 +95,10 @@ const App: React.FC = () => {
             )}
 
             {!isLoading && hashtags.length > 0 && <ResultsDisplay hashtags={hashtags} />}
-        </div>
-      </main>
-      <Footer />
+          </div>
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };
