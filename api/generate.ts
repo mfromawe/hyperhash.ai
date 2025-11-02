@@ -63,24 +63,8 @@ export default async function handler(req: any, res: any) {
       model = genAI.getGenerativeModel({ model: preferredModelName });
     }
 
-    const prompt = `
-      You are a highly advanced AI assistant, "HyperHash," specializing in social media marketing and trend analysis.
-      Your task is to generate viral, trend-driven, multilingual hashtags. You have access to real-time Google Trends data to inform your decisions.
-
-      Analyze the following user-provided content and the generation parameters. Based on this, generate exactly 15 optimized hashtags.
-
-      User Content: "${content}"
-      Target Platform: "${platform}"
-      Desired Style: "${style}" (Options: Organic, Trending, Branded, Hybrid). The Hybrid style should be a smart mix of all other styles.
-      Language: "${language}"
-
-      For each hashtag, provide:
-      1) hashtag: The hashtag itself, starting with #.
-      2) trend_score: An integer score from 0 to 100, representing its current viral potential based on Google Trends and social media momentum.
-      3) reason: A very brief, one-sentence explanation for why this hashtag is a good choice and what its score reflects.
-
-      Your output MUST be a valid JSON array of objects. Do not include any markdown formatting.
-    `;
+    // Optimized shorter prompt for faster response
+    const prompt = `Generate 15 viral ${language} hashtags for ${platform} (${style} style) about: "${content}". Return JSON array with: hashtag (string with #), trend_score (0-100), reason (brief). No markdown.`;
 
     // Try generating content; if the model is not available for this API version,
     // the SDK will throw. If we receive a 404 model-not-found error, try a safe fallback model.
@@ -88,7 +72,7 @@ export default async function handler(req: any, res: any) {
     try {
       geminiRes = await model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }]}],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.5, maxOutputTokens: 1500 },
       });
     } catch (e: any) {
       console.warn('Model generateContent failed; attempting fallback model if applicable', e?.message || e);
@@ -99,7 +83,7 @@ export default async function handler(req: any, res: any) {
           const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-pro' });
           geminiRes = await fallbackModel.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }]}],
-            generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
+            generationConfig: { responseMimeType: 'application/json', temperature: 0.5, maxOutputTokens: 1500 },
           });
         } catch (fallbackErr) {
           // rethrow original error to be handled below
