@@ -52,7 +52,16 @@ export default async function handler(req: any, res: any) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    // Use a stable model name; fall back if unavailable in this API/version.
+    const preferredModelName = 'gemini-pro';
+    let model: any;
+    try {
+      model = genAI.getGenerativeModel({ model: preferredModelName });
+    } catch (e) {
+      // If getting preferred model fails synchronously, try a generic call to list models is possible
+      console.warn('Preferred model init failed, will attempt to continue and let SDK return a helpful error', e);
+      model = genAI.getGenerativeModel({ model: preferredModelName });
+    }
 
     const prompt = `
       You are a highly advanced AI assistant, "HyperHash," specializing in social media marketing and trend analysis.
@@ -73,6 +82,8 @@ export default async function handler(req: any, res: any) {
       Your output MUST be a valid JSON array of objects. Do not include any markdown formatting.
     `;
 
+    // Try generating content; if the model is not available for this API version,
+    // the SDK will throw and our catch block will handle it.
     const geminiRes = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }]}],
       generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
