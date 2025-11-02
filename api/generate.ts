@@ -90,6 +90,11 @@ export default async function handler(req: any, res: any) {
     return res.status(200).json(parsed);
   } catch (err: any) {
     console.error('API /api/generate error:', err);
-    return res.status(500).json({ error: 'Failed to generate hashtags' });
+    // Log stack if available for easier debugging in server logs
+    if (err && err.stack) console.error(err.stack);
+
+    // In production keep the response generic to avoid leaking internals.
+    const clientMessage = process.env.NODE_ENV === 'production' ? 'Failed to generate hashtags' : (err?.message || 'Failed to generate hashtags');
+    return res.status(500).json({ error: clientMessage });
   }
 }
